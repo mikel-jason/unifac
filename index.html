@@ -69,7 +69,17 @@
 			</section>
 			<section data-markdown>
 				- Also use UNIFAC-DMD -> 6 instead of 2 constants
-				- Use DIPPR or Antoine -> Vapor pressure
+				- Calculate mixture vapor pressure
+					- Antoine
+					\begin{aligned}
+						\log_{10} p = A - \frac{B}{C+T}
+					\end{aligned}
+					- DIPPR 101
+					\begin{aligned}
+						\frac{p}{p^0} = \exp \left( a + \frac{b}{T} + c \ln (T) + d \cdot T^e \right)
+					\end{aligned}
+
+				
 			</section>
         </section>
       </div>
@@ -78,6 +88,7 @@
     <script src="dist/reveal.js"></script>
     <script src="plugin/notes/notes.js"></script>
     <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/math/math.js"></script>
     <script src="plugin/highlight/highlight.js"></script>
     <script>
       // More info about initialization & config:
@@ -87,7 +98,7 @@
         hash: true,
 
         // Learn about plugins: https://revealjs.com/plugins/
-        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath],
       });
     </script>
   </body>
