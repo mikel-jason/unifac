@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title>UNIFAC Fundamentals</title>
+
+    <link rel="stylesheet" href="dist/reset.css" />
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+
+    <!-- Theme used for syntax highlighted code -->
+    <link
+      rel="stylesheet"
+      href="plugin/highlight/monokai.css"
+      id="highlight-theme"
+    />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section data-markdown>
+		  ## UNIFAC Group Contribution Method 
+		  
+		  #### Fundamentals
+		</section>
+		<section>
+			<section data-markdown>
+			  #### Vapor Liquid Equilibria
+			</section>
+			<section data-markdown>
+				- Phase diagrams & p,T-behaviour -> H2O boiling temperature depending on elevation
+				- Ideal gases
+				- Non-ideality, activity coefficients, gamma-phi-approach
+				- Models for activity coefficient calculation -> need substance-specific data
+					- van Laar
+					- NRTL
+					- UNIQUAC
+			</section>
+        </section>
+		<section>
+			<section data-markdown>
+			  #### Group Contribution Methods
+			</section>
+			<section data-markdown>
+				- Comparison to LEGO bridge (see former presentation)
+			</section>
+        </section>
+		<section>
+			<section data-markdown>
+			  #### UNIFAC
+			</section>
+			<section data-markdown>
+				- Some history
+				- Broad overview over the model
+					- Fomulas
+					- Required data
+					- Result accuracy -> paper examples
+				- Limitation: Assumes VLE!
+			</section>
+        </section>
+		<section>
+			<section data-markdown>
+			  #### What's next
+			</section>
+			<section data-markdown>
+				- Also use UNIFAC-DMD -> 6 instead of 2 constants
+				- Use DIPPR or Antoine -> Vapor pressure
+			</section>
+        </section>
+      </div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+        hash: true,
+
+        // Learn about plugins: https://revealjs.com/plugins/
+        plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+      });
+    </script>
+  </body>
+</html>
