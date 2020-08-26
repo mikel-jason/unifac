@@ -1,105 +1,330 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-    />
 
-    <title>UNIFAC Fundamentals</title>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
-    <link rel="stylesheet" href="dist/reset.css" />
-    <link rel="stylesheet" href="dist/reveal.css" />
-    <link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+	<title>UNIFAC Fundamentals</title>
 
-    <!-- Theme used for syntax highlighted code -->
-    <link
-      rel="stylesheet"
-      href="plugin/highlight/monokai.css"
-      id="highlight-theme"
-    />
-  </head>
-  <body>
-    <div class="reveal">
-      <div class="slides">
-        <section data-markdown>
-		  ## UNIFAC Group Contribution Method 
-		  
-		  #### Fundamentals
-		</section>
-		<section>
+	<link rel="stylesheet" href="dist/reset.css" />
+	<link rel="stylesheet" href="dist/reveal.css" />
+	<link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme" />
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
 			<section data-markdown>
-			  #### Vapor Liquid Equilibria
+				## UNIFAC Group Contribution Method
+
+				#### Fundamentals
 			</section>
-			<section data-markdown>
-				- Phase diagrams & p,T-behaviour -> H2O boiling temperature depending on elevation
-				- Ideal gases
-				- Non-ideality, activity coefficients, gamma-phi-approach
-				- Models for activity coefficient calculation -> need substance-specific data
+			<section>
+				<section data-markdown>
+					#### Vapor Liquid Equilibria
+				</section>
+				<section data-markdown>
+					- Phase diagrams & p,T-behaviour -> H2O boiling temperature depending on elevation
+					- Ideal gases
+					- Non-ideality, activity coefficients, gamma-phi-approach
+					- Models for activity coefficient calculation -> need substance-specific data
 					- van Laar
 					- NRTL
 					- UNIQUAC
+				</section>
+				<section>
+					<h3>A single component's phases</h3>
+					<div style="display: flex; align-items: center;">
+						<div style="display: inline-block; width: 50%">
+							<div style="width: 100%; background-color: white;">
+								<img src="img/pV-diagram.png" />
+								<!-- https://www.chemistnate.com/uploads/5/0/2/9/5029141/__5536568_orig.png -->
+							</div>
+						</div>
+						<div style="display: inline-block; width: 50%; padding: 1em;">
+							<p>In general, phase changes are depending on the compination of
+								<strong>temperature</strong> and <strong>pressure</strong></p>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h3>Liq.-gas phase change with two components</h3>
+					<img src="img/vle-benzene-toluene.png" />
+					<!-- https://chem.libretexts.org/@api/deki/files/41486/BENZTOL.png?revision=1 -->
+				</section>
+				<section>
+					<h3>Liq.-gas phase change with two components</h3>
+					<img src="img/vle-ethanol-water.png" />
+					<!-- https://upload.wikimedia.org/wikipedia/commons/1/1e/Vapor-Liquid_Equilibrium_Mixture_of_Ethanol_and_Water.png -->
+				</section>
+				<section>
+					<h3>Calculation boiling pressure</h3>
+					<div style="display: flex; align-items: center;">
+						<div style="width: 50%; background-color: white;">
+							<img src="img/raoult.png" />
+							<!-- https://de.wikipedia.org/wiki/Raoultsches_Gesetz#/media/Datei:OdchylkyRaoult.png -->
+							<p style="font-size: 50%; color: black; margin-top: 0;">Mole fraction x</p>
+						</div>
+						<div style="width: 50%;">
+							<div>
+								Raoult's Law:
+								\begin{aligned}
+								p = \sum_i x_i \cdot p_{0i}^{LV}
+								\end{aligned}
+							</div>
+							<div class="fragment">
+								Respecting non-ideality:
+								\begin{aligned}
+								p = \sum_i x_i \cdot p_{0i}^{LV} \cdot \gamma_i
+								\end{aligned}
+							</div>
+						</div>
+					</div>
+				</section>
+				<section>
+					<h3>Activity coefficient</h3>
+					<ul>
+						<li>Factor to describe the effective (mole) fraction</li>
+						<li>Not substance-, but mixture-specific</li>
+						<li>Hard to calculate</li>
+						<ul>
+							<li><a href="https://en.wikipedia.org/wiki/Van_Laar_equation" target="_blank">Van Laar</a>
+							</li>
+							<li><a href="https://de.wikipedia.org/wiki/UNIQUAC" target="_blank">UNIQUAC</a></li>
+							<li><a href="https://de.wikipedia.org/wiki/Non-Random-Two-Liquid-Modell"
+									target="_blank">NRTL</a></li>
+						</ul>
+					</ul>
+					<p class="fragment" style="color: orange;"><i class="fa fa-arrow-circle-o-right" aria-hidden="true"
+							style="padding-right: 0.5em;"></i>All those models need substance-specific data</p>
+				</section>
 			</section>
-        </section>
-		<section>
-			<section data-markdown>
-			  #### Group Contribution Methods
+			<section>
+				<section>
+					<h3>Group Contribution Methods</h3>
+				</section>
+				<section data-background-image="img/lego.jpg">
+					<div style="background-color: rgba(0, 0, 0, 0.5); padding: 1em;">
+						<h3>Group Contribution Methods</h3>
+						<h3>with LEGO</h3>
+					</div>
+				</section>
+				<section>
+					<h3>Imagine we build a bridge</h3>
+					<div style="display: flex; align-items: center; ">
+						<div style="display: inline-block; width: 50%">
+							This is what we want
+							<img src="img/lego-bridge.jpg" />
+						</div>
+						<div style="display: inline-block; width: 50%;" class="fragment">
+							This is what we have
+							<img src="img/lego-heads.jpg" style="width: 100%;" />
+							<!-- https://i.ebayimg.com/00/s/NjAwWDU1Ng==/z/OhIAAOSw87JcCZSj/$_57.JPG?set_id=8800005007 -->
+						</div>
+					</div>
+				</section>
+				<section>
+					<h3>What happened?</h3>
+					<p>We decided based on the available bricks and their combination:</p>
+					<ul>
+						<li>Forms of bricks <i class="fa fa-check-circle fragment" data-fragment-index="1"
+								aria-hidden="true" style="color: green;"></i></li>
+						<li>Connections of bricks <i class="fa fa-check-circle fragment" data-fragment-index="1"
+								aria-hidden="true" style="color: green;"></i></li>
+						<li>Fractions of bricks <i class="fa fa-check-circle fragment" data-fragment-index="1"
+								aria-hidden="true" style="color: green;"></i></li>
+						<li>Colors of bricks <i class="fa fa-exclamation-circle fragment" data-fragment-index="1"
+								aria-hidden="true" style="color: red;"></i></li>
+						<li>Symbols of bricks <i class="fa fa-exclamation-circle fragment" data-fragment-index="1"
+								aria-hidden="true" style="color: red;"></i></li>
+					</ul>
+				</section>
+				<section>
+					<h3>What's the message?</h3>
+					<ul>
+						<li>We can roughly say if building a bridge with a given mix of LEGO bricks is feasable and wise
+							or not</li>
+						<li>Therefore, we need information about each brick itself as well as about the combination of
+							different bricks</li>
+						<li>We predict the result without any further information</li>
+					</ul>
+				</section>
+				<section>
+					<h3>Let's do the same with chemistry</h3>
+				</section>
+				<section>
+					<h3>Let's do the same with chemistry</h3>
+					<img src="img/mol-structure.png" style="margin-right: 0.5em;" />
+					<img src="img/mol-structure-fg.png" style="margin-left: 0.5em;" class="fragment" />
+					<!-- <div class="fragment">
+						<hr />
+						<strong>Substance-specific:</strong> Van der Waals parameters <br />
+						<strong>FG interaction:</strong> Model parameters
+					</div> -->
+				</section>
 			</section>
-			<section data-markdown>
-				- Comparison to LEGO bridge (see former presentation)
-			</section>
-        </section>
-		<section>
-			<section data-markdown>
-			  #### UNIFAC
-			</section>
-			<section data-markdown>
-				- Some history
-				- Broad overview over the model
+			<section>
+				<section data-markdown>
+					#### UNIFAC
+				</section>
+				<section data-markdown>
+					- Some history
+					- Broad overview over the model
 					- Fomulas
 					- Required data
 					- Result accuracy -> paper examples
-				- Limitation: Assumes VLE!
+					- Limitation: Assumes VLE!
+				</section>
+				<section>
+					<h3>The UNIFAC model</h3>
+					<ul>
+						<li>Calc pure component parameters based on functional groups</li>
+						<li>Calc component parameters in the mixture based on pure components</li>
+						<li>Calc activity coefficients:</li>
+						<ul>
+							<li>Combinatorial part: From component</li>
+							<li>Residual part: From component and interaction</li>
+						</ul>
+					</ul>
+				</section>
+				<section>
+					<h3>The maths</h3>
+				</section>
+				<section>
+					Volume and surface area parameters per component:
+					\begin{aligned}
+					r_i &= \sum_j R_j \nu_j^{(i)} \\
+					q_i &= \sum_j Q_j \nu_j^{(i)}
+					\end{aligned}
+				</section>
+				<section>
+					Volume and surface area parameters <span style="color: orange">in the mixture</span> per component:
+					\begin{aligned}
+					\phi_i &= \frac{ r_i }{ \sum_j r_j x_j } \\
+					\theta_i &= \frac{ q_i }{ \sum_j q_j x_j }
+					\end{aligned}
+				</section>
+				<section>
+					Combinatorial part:
+					\begin{aligned}
+					\ln \gamma_i^C = 1 - \phi_i' + \ln \phi_i' - \frac{z}{2} q_i \left( 1 - \frac{\phi_i}{\theta_i} +
+					\ln \frac{\phi_i}{\theta_i} \right)
+					\end{aligned}
+				</section>
+				<section>
+					Group surface area fraction per component:
+					\begin{aligned}
+					\Theta^{(i)}_k = \frac{ Q_k X_k^{(i)} }{ \sum_n Q_n X_n^{(i)} }
+					\end{aligned}
+				</section>
+				<section>
+					Group activity coefficients per component:
+					<div style="position: absolute; left: 50%; transform: translateX(-50%)">
+						\begin{aligned}
+						\ln \Gamma_k^{(i)} = Q_k \cdot \left( 1 - \ln \left( \sum_m \theta_m^{(i)}\Psi_{mk} \right) -
+						\sum_m \frac{ \theta_m^{(i)} \Psi_{km} }{ \sum_n \theta_n^{(i)} \Psi_{nm} } \right)
+						\end{aligned}
+						<span style="color: red;">Nochmal gucken, letzter Buch Indices Zähler/Nenner passt
+							nicht</span>
+
+						Group interaction parameters:
+						\begin{aligned}
+						\Psi_{ij} = \exp \left( - \frac{ a_{ij} + b_{ij} T + c_{ij} T^2 }{ T } \right)
+						\end{aligned}
+						<span style="color: red;">Nochmal gucken, ob das nicht UNIFAC-DMD ist (Anz. Parameter)</span>
+					</div>
+				</section>
+				<section>
+					Group mole fractions in the mixture
+					\begin{aligned}
+					X_i = \frac{ \sum_j x_j \nu_i^{(j)} }{ \sum_j x_j \sum_k \nu_k^{(j)} }
+					\end{aligned}
+
+					Group surface area fraction:
+					\begin{aligned}
+					\Theta_k = \frac{ Q_k X_k }{ \sum_n Q_n X_n }
+					\end{aligned}
+				</section>
+				<section>
+					Group activity coefficients
+					\begin{aligned}
+					\ln \Gamma_k = Q_k \cdot \left( 1 - \ln \left( \sum_m \theta_m \Psi_{mk} \right) - \sum_m \frac{ \theta_m \Psi_{km} }{ \sum_n \theta_n \Psi_{nm} } \right)
+					\end{aligned}
+					<span style="color: red;">Nochmal gucken, letzter Buch Indices Zähler/Nenner passt
+						nicht</span>
+				</section>
+				<section>
+					Residual part:
+					\begin{aligned}
+						\ln \gamma_i^R = \sum_k \nu_k^{(i)} \left( \ln \Gamma_k - \ln \Gamma_k^{(i)} \right)
+					\end{aligned}
+
+					Activity coefficient:
+					\begin{aligned}
+						\ln \gamma_i = \ln \gamma_i^C + \ln \gamma_i^R
+					\end{aligned}
+				</section>
+				<section>
+					<h3>Parameters</h3>
+					Are publicly available
+					<hr />
+					<div style="display: flex; align-items: center; ">
+						<div style="display: inline-block; width: 50%">
+							Van der Waals
+							<img src="img/params-vdW.png" />
+						</div>
+						<div style="display: inline-block; width: 50%">
+							UNIFAC model
+							<img src="img/unifac-params.jpg" />
+							<!-- http://unifac.ddbst.de/files/unifac/img/diverse/Matrizen/UNIFAC2020.jpg -->
+						</div>
+				</section>
 			</section>
-        </section>
-		<section>
-			<section data-markdown>
-			  #### What's next
-			</section>
-			<section data-markdown>
-				- Also use UNIFAC-DMD -> 6 instead of 2 constants
-				- Calculate mixture vapor pressure
+			<section>
+				<section data-markdown>
+					#### What's next
+				</section>
+				<section data-markdown>
+					- Also use UNIFAC-DMD -> 6 instead of 2 constants
+					- Calculate mixture vapor pressure
 					- Antoine
 					\begin{aligned}
-						\log_{10} p = A - \frac{B}{C+T}
+					\log_{10} p = A - \frac{B}{C+T}
 					\end{aligned}
 					- DIPPR 101
 					\begin{aligned}
-						\frac{p}{p^0} = \exp \left( a + \frac{b}{T} + c \ln (T) + d \cdot T^e \right)
+					\frac{p}{p^0} = \exp \left( a + \frac{b}{T} + c \ln (T) + d \cdot T^e \right)
 					\end{aligned}
 
-				
+
+				</section>
 			</section>
-        </section>
-      </div>
-    </div>
+		</div>
+	</div>
 
-    <script src="dist/reveal.js"></script>
-    <script src="plugin/notes/notes.js"></script>
-    <script src="plugin/markdown/markdown.js"></script>
-    <script src="plugin/math/math.js"></script>
-    <script src="plugin/highlight/highlight.js"></script>
-    <script>
-      // More info about initialization & config:
-      // - https://revealjs.com/initialization/
-      // - https://revealjs.com/config/
-      Reveal.initialize({
-        hash: true,
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/math/math.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/chalkboard/plugin.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
 
-        // Learn about plugins: https://revealjs.com/plugins/
-        plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath],
-      });
-    </script>
-  </body>
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath, RevealChalkboard],
+		});
+	</script>
+</body>
+
 </html>
