@@ -1,8 +1,12 @@
-struct Substance { 
+use crate::functional_group::FunctionalGroup;
+
+pub struct Substance {
+    fraction: f64,
+    functional_groups: Vec<FunctionalGroup>,
+    gamma: Option<Result<f64, String>>,
 }
 
-impl Substance {
-}
+impl Substance {}
 
 // Unit tests
 #[cfg(test)]
