@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if cargo fmt -- --check; then
+	if cargo test; then
+		echo 'Checks succeded';
+	else 
+		echo -e '\n\n--------------------------------------------\nFailed test checks!\nDo not forget to git add fixed files again!\n--------------------------------------------'; 
+		exit 1;
+	fi;
+else
+	echo -e '\n\n--------------------------------------------\nFailed format checks!\nDo not forget to git add formatted files again!\n--------------------------------------------';
+	exit 1;
+fi
