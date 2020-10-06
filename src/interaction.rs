@@ -6364,3 +6364,31 @@ impl InteractionParameter {
         }
     }
 }
+
+// Unit tests
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fetch_interaction_param_1_2() {
+        let param = InteractionParameter::from(1, 2).unwrap();
+        assert_eq!(param.i, 1);
+        assert_eq!(param.j, 2);
+        assert_eq!(param.a_ij, 86.02);
+    }
+
+    #[test]
+    fn fetch_interaction_param_23_12() {
+        let param = InteractionParameter::from(23, 12).unwrap();
+        assert_eq!(param.i, 23);
+        assert_eq!(param.j, 12);
+        assert_eq!(param.a_ij, 235.6);
+    }
+
+    #[test]
+    fn fetch_interaction_param_err() {
+        let param = InteractionParameter::from(1, 1);
+        assert!(param.is_err(), "interaction parameter should not exist");
+    }
+}
