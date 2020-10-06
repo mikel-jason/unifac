@@ -1,6 +1,7 @@
 mod calculator;
 mod formula;
 mod functional_group;
+mod interaction;
 mod substance;
 
 // Unit tests
