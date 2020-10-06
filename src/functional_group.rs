@@ -1,3 +1,4 @@
+#[derive(Debug, Clone)]
 pub struct FunctionalGroup {
     pub id: u8,
     pub subgroup: String,
@@ -925,7 +926,30 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn fetch_functional_group_1() {
+        let group = FunctionalGroup::from(1, 1.0).unwrap();
+        assert_eq!(group.id, 1);
+        assert_eq!(group.subgroup, "CH3".to_string());
+        assert_eq!(group.maingroup, "[1]CH2".to_string());
+        assert_eq!(group.r, 0.9011);
+        assert_eq!(group.q, 0.8480);
+        assert_eq!(group.nu, 1.0);
+    }
+
+    #[test]
+    fn fetch_functional_group_67() {
+        let group = FunctionalGroup::from(67, 3.5).unwrap();
+        assert_eq!(group.id, 67);
+        assert_eq!(group.subgroup, "DMSO".to_string());
+        assert_eq!(group.maingroup, "[35]DMSO".to_string());
+        assert_eq!(group.r, 2.8266);
+        assert_eq!(group.q, 2.4720);
+        assert_eq!(group.nu, 3.5);
+    }
+
+    #[test]
+    fn fetch_functional_group_err() {
+        let group = FunctionalGroup::from(255, 1.0);
+        assert!(group.is_err(), "functional groups should not exist");
     }
 }
