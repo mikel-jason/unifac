@@ -1,9 +1,9 @@
 use crate::functional_group::FunctionalGroup;
 
 pub struct Substance {
-    fraction: f64,
-    functional_groups: Vec<FunctionalGroup>,
-    gamma: Option<Result<f64, String>>,
+    pub fraction: f64,
+    pub functional_groups: Vec<FunctionalGroup>,
+    pub gamma: Option<Result<f64, String>>,
 }
 
 impl Substance {}

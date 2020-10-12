@@ -1,7 +1,7 @@
 pub struct InteractionParameter {
     i: u8,
     j: u8,
-    a_ij: f64,
+    pub a_ij: f64,
 }
 
 impl InteractionParameter {
