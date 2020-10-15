@@ -69,23 +69,38 @@ pub fn calc_10(i: u8, j: u8, temperature: f64) -> Result<f64, &'static str> {
     Ok(std::f64::consts::E.powf(-interp.a_ij / temperature))
 }
 
-pub fn calc_11_sum_1(theta_m: &Vec<f64>, psi_mk: Vec<f64>) -> f64 {
+pub fn calc_11_sum_1(theta_m: &Vec<f64>, psi_mk: &Vec<f64>, shadow: &Vec<bool>) -> f64 {
     let mut sum = 0.0;
-    for (theta, psi) in theta_m.iter().zip(psi_mk) {
-        sum += theta * psi
+    let mut theta_index = 0;
+    for psi_index in 0..psi_mk.len() {
+        if shadow[psi_index] {
+            continue;
+        }
+        sum += theta_m[theta_index] * psi_mk[psi_index];
+        theta_index += 1;
     }
     sum
 }
 
-pub fn calc_11_sum_2(k_index: usize, theta_m: &Vec<f64>, psi_nm: &Vec<Vec<f64>>) -> f64 {
+pub fn calc_11_sum_2(
+    k_index: usize,
+    theta_m: &Vec<f64>,
+    psi_nm: &Vec<Vec<f64>>,
+    shadow: &Vec<bool>,
+) -> f64 {
     let mut sum = 0.0;
+    let mut psi_index = 0;
     for m in 0..theta_m.len() {
-        let numerator = theta_m[m] * psi_nm[k_index][m];
+        while shadow[psi_index] {
+            psi_index += 1;
+        }
+        let numerator = theta_m[m] * psi_nm[k_index][psi_index];
         let mut psi_n: Vec<f64> = Vec::new();
         for psi in psi_nm {
-            psi_n.push(psi[m]);
+            psi_n.push(psi[psi_index]);
         }
-        let denominator = calc_11_sum_1(theta_m, psi_n);
+        let denominator = calc_11_sum_1(theta_m, &psi_n, shadow);
+        psi_index += 1;
         sum += numerator / denominator;
     }
     sum
@@ -97,6 +112,14 @@ pub fn calc_11(q_k: f64, sum_1: f64, sum_2: f64) -> f64 {
 
 pub fn calc_12(q_k: f64, sum_1: f64, sum_2: f64) -> f64 {
     calc_11(q_k, sum_1, sum_2)
+}
+
+pub fn calc_13(substance: &Substance, gamma_k: &Vec<f64>, gamma_i_k: &Vec<f64>) -> f64 {
+    let mut sum = 0.0;
+    for i in 0..substance.functional_groups.len() {
+        sum += substance.functional_groups[i].nu * (gamma_k[i] - gamma_i_k[i]);
+    }
+    sum
 }
 
 // Unit tests

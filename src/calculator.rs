@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::formula;
+use crate::functional_group::FunctionalGroup;
 use crate::substance::Substance;
 
 pub fn calc(substances: Vec<Substance>, temperature: f64) -> Vec<Substance> {
@@ -11,7 +12,11 @@ fn calc_combinatorial(i: u8, substances: Vec<Substance>) -> f64 {
     0.0
 }
 
-fn calc_residual(i: u8, substances: Vec<Substance>, temperature: f64) -> Result<f64, &'static str> {
+fn calc_residual(
+    i: u8,
+    substances: Vec<Substance>,
+    temperature: f64,
+) -> Result<Vec<f64>, &'static str> {
     let mut id_list = Vec::new();
     for substance in &substances {
         for fg in &substance.functional_groups {
@@ -20,7 +25,6 @@ fn calc_residual(i: u8, substances: Vec<Substance>, temperature: f64) -> Result<
             }
         }
     }
-    println!("{:?}", id_list);
 
     let mut x_i_m = Vec::new();
     for substance in &substances {
@@ -30,14 +34,12 @@ fn calc_residual(i: u8, substances: Vec<Substance>, temperature: f64) -> Result<
         }
         x_i_m.push(temp);
     }
-    println!("{:?}", x_i_m);
 
     let mut x_m = Vec::new();
     let sum = formula::calc_7_sum(&substances);
     for id in &id_list {
         x_m.push(formula::calc_7(*id, sum, &substances));
     }
-    println!("{:?}", x_m);
 
     let x_k_map: HashMap<u8, f64> = id_list.clone().into_iter().zip(x_m).collect();
     let sum = formula::calc_8_sum(&x_k_map);
@@ -45,7 +47,6 @@ fn calc_residual(i: u8, substances: Vec<Substance>, temperature: f64) -> Result<
     for id in &id_list {
         theta_k.push(formula::calc_8(*id, &x_k_map, sum));
     }
-    println!("{:?}", theta_k);
 
     let mut theta_i_k = Vec::new();
     for i in 0..substances.len() {
@@ -60,39 +61,88 @@ fn calc_residual(i: u8, substances: Vec<Substance>, temperature: f64) -> Result<
         }
         theta_i_k.push(temp);
     }
-    println!("{:?}", theta_i_k);
 
     let mut psi_n_m = Vec::new();
     for id_n in &id_list {
         let mut temp = Vec::new();
         for id_m in &id_list {
             if id_n == id_m {
-                println!("Equal!");
                 temp.push(1.0);
             } else {
-                println!("{} - {}", id_n, id_m);
                 temp.push(formula::calc_10(*id_n, *id_m, temperature).unwrap());
             }
         }
         psi_n_m.push(temp);
     }
-    println!("Psi: {:?}", psi_n_m);
 
-    // let mut gamma_i_k = Vec::new();
-    // for i in 0..substances.len() {
-    //     let mut temp = Vec::new();
+    let mut psi_m_k = Vec::new();
+    for i in 0..id_list.len() {
+        let mut temp = Vec::new();
+        for psi_m in &psi_n_m {
+            temp.push(psi_m[i]);
+        }
+        psi_m_k.push(temp);
+    }
 
-    Ok(0.0)
+    let mut gamma_i_k = Vec::new();
+    for i in 0..substances.len() {
+        let mut temp = Vec::new();
+        let mut fg_ids = Vec::new();
+        for fg in &substances[i].functional_groups {
+            fg_ids.push(fg.id);
+        }
+        let mut shadow = Vec::new();
+        for id in &id_list {
+            if fg_ids.contains(id) {
+                shadow.push(false);
+            } else {
+                shadow.push(true);
+            }
+        }
+        for fg in &substances[i].functional_groups {
+            let index = id_list.iter().position(|&x| x == fg.id).unwrap();
+            let sum_1 = formula::calc_11_sum_1(&theta_i_k[i], &psi_m_k[index], &shadow);
+            let sum_2 = formula::calc_11_sum_2(index, &theta_i_k[i], &psi_n_m, &shadow);
+            temp.push(formula::calc_11(fg.q, sum_1, sum_2));
+        }
+        gamma_i_k.push(temp);
+    }
+
+    let mut gamma_k = Vec::new();
+    for i in 0..id_list.len() {
+        let sum_1 = formula::calc_11_sum_1(&theta_k, &psi_m_k[i], &vec![false; id_list.len()]);
+        let sum_2 = formula::calc_11_sum_2(i, &theta_k, &psi_n_m, &vec![false; id_list.len()]);
+        let q_k = FunctionalGroup::from(id_list[i], 1.0).unwrap().q;
+        gamma_k.push(formula::calc_12(q_k, sum_1, sum_2));
+    }
+
+    let mut gamma = Vec::new();
+    for i in 0..substances.len() {
+        let mut gamma_k_subst = Vec::new();
+        for fg in &substances[i].functional_groups {
+            let index = id_list.iter().position(|&x| x == fg.id).unwrap();
+            gamma_k_subst.push(gamma_k[index]);
+        }
+        gamma.push(formula::calc_13(
+            &substances[i],
+            &gamma_k_subst,
+            &gamma_i_k[i],
+        ))
+    }
+
+    Ok(gamma)
 }
 
 // Unit tests
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::functional_group::FunctionalGroup;
+    const EPSILON: f64 = 0.001;
 
     #[test]
     fn residual_calculates() {
+        let acetone_value = 0.6709271125908701;
+        let pentane_value = 0.00177787069083582;
         let acetone = Substance {
             fraction: 0.047,
             functional_groups: vec![
@@ -111,6 +161,7 @@ mod tests {
         };
 
         let resid = calc_residual(0, vec![acetone, pentane], 307.0).unwrap();
-        assert_eq!(4.0, 4.0);
+        assert!((resid[0] - acetone_value).abs() < EPSILON);
+        assert!((resid[1] - pentane_value).abs() < EPSILON);
     }
 }
