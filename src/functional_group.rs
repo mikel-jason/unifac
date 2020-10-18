@@ -2,7 +2,7 @@
 pub struct FunctionalGroup {
     pub id: u8,
     pub subgroup: String,
-    pub maingroup: String,
+    pub main_id: u8,
     pub nu: f64,
     pub r: f64,
     pub q: f64,
@@ -14,7 +14,7 @@ impl FunctionalGroup {
             1 => Ok(FunctionalGroup {
                 id: 1,
                 subgroup: "CH3".to_string(),
-                maingroup: "[1]CH2".to_string(),
+                main_id: 1,
                 nu: amount,
                 r: 0.9011,
                 q: 0.8480,
@@ -22,7 +22,7 @@ impl FunctionalGroup {
             2 => Ok(FunctionalGroup {
                 id: 2,
                 subgroup: "CH2".to_string(),
-                maingroup: "[1]CH2".to_string(),
+                main_id: 1,
                 nu: amount,
                 r: 0.6744,
                 q: 0.5400,
@@ -30,7 +30,7 @@ impl FunctionalGroup {
             3 => Ok(FunctionalGroup {
                 id: 3,
                 subgroup: "CH".to_string(),
-                maingroup: "[1]CH2".to_string(),
+                main_id: 1,
                 nu: amount,
                 r: 0.4469,
                 q: 0.2280,
@@ -38,7 +38,7 @@ impl FunctionalGroup {
             4 => Ok(FunctionalGroup {
                 id: 4,
                 subgroup: "C".to_string(),
-                maingroup: "[1]CH2".to_string(),
+                main_id: 1,
                 nu: amount,
                 r: 0.2195,
                 q: 0.0000,
@@ -46,7 +46,7 @@ impl FunctionalGroup {
             5 => Ok(FunctionalGroup {
                 id: 5,
                 subgroup: "CH2=CH".to_string(),
-                maingroup: "[2]C=C".to_string(),
+                main_id: 2,
                 nu: amount,
                 r: 1.3454,
                 q: 1.1760,
@@ -54,7 +54,7 @@ impl FunctionalGroup {
             6 => Ok(FunctionalGroup {
                 id: 6,
                 subgroup: "CH=CH".to_string(),
-                maingroup: "[2]C=C".to_string(),
+                main_id: 2,
                 nu: amount,
                 r: 1.1167,
                 q: 0.8670,
@@ -62,7 +62,7 @@ impl FunctionalGroup {
             7 => Ok(FunctionalGroup {
                 id: 7,
                 subgroup: "CH2=C".to_string(),
-                maingroup: "[2]C=C".to_string(),
+                main_id: 2,
                 nu: amount,
                 r: 1.1173,
                 q: 0.9880,
@@ -70,7 +70,7 @@ impl FunctionalGroup {
             8 => Ok(FunctionalGroup {
                 id: 8,
                 subgroup: "CH=C".to_string(),
-                maingroup: "[2]C=C".to_string(),
+                main_id: 2,
                 nu: amount,
                 r: 0.8886,
                 q: 0.6760,
@@ -78,7 +78,7 @@ impl FunctionalGroup {
             9 => Ok(FunctionalGroup {
                 id: 9,
                 subgroup: "ACH".to_string(),
-                maingroup: "[3]ACH".to_string(),
+                main_id: 3,
                 nu: amount,
                 r: 0.5313,
                 q: 0.4000,
@@ -86,7 +86,7 @@ impl FunctionalGroup {
             10 => Ok(FunctionalGroup {
                 id: 10,
                 subgroup: "AC".to_string(),
-                maingroup: "[3]ACH".to_string(),
+                main_id: 3,
                 nu: amount,
                 r: 0.3652,
                 q: 0.1200,
@@ -94,7 +94,7 @@ impl FunctionalGroup {
             11 => Ok(FunctionalGroup {
                 id: 11,
                 subgroup: "ACCH3".to_string(),
-                maingroup: "[4]ACCH2".to_string(),
+                main_id: 4,
                 nu: amount,
                 r: 1.2663,
                 q: 0.9680,
@@ -102,7 +102,7 @@ impl FunctionalGroup {
             12 => Ok(FunctionalGroup {
                 id: 12,
                 subgroup: "ACCH2".to_string(),
-                maingroup: "[4]ACCH2".to_string(),
+                main_id: 4,
                 nu: amount,
                 r: 1.0396,
                 q: 0.6600,
@@ -110,7 +110,7 @@ impl FunctionalGroup {
             13 => Ok(FunctionalGroup {
                 id: 13,
                 subgroup: "ACCH".to_string(),
-                maingroup: "[4]ACCH2".to_string(),
+                main_id: 4,
                 nu: amount,
                 r: 0.8121,
                 q: 0.3480,
@@ -118,7 +118,7 @@ impl FunctionalGroup {
             14 => Ok(FunctionalGroup {
                 id: 14,
                 subgroup: "OH".to_string(),
-                maingroup: "[5]OH".to_string(),
+                main_id: 5,
                 nu: amount,
                 r: 1.0000,
                 q: 1.2000,
@@ -126,7 +126,7 @@ impl FunctionalGroup {
             15 => Ok(FunctionalGroup {
                 id: 15,
                 subgroup: "CH3OH".to_string(),
-                maingroup: "[6]CH3OH".to_string(),
+                main_id: 6,
                 nu: amount,
                 r: 1.4311,
                 q: 1.4320,
@@ -134,7 +134,7 @@ impl FunctionalGroup {
             16 => Ok(FunctionalGroup {
                 id: 16,
                 subgroup: "H2O".to_string(),
-                maingroup: "[7]H2O".to_string(),
+                main_id: 7,
                 nu: amount,
                 r: 0.9200,
                 q: 1.4000,
@@ -142,7 +142,7 @@ impl FunctionalGroup {
             17 => Ok(FunctionalGroup {
                 id: 17,
                 subgroup: "ACOH".to_string(),
-                maingroup: "[8]ACOH".to_string(),
+                main_id: 8,
                 nu: amount,
                 r: 0.8952,
                 q: 0.6800,
@@ -150,7 +150,7 @@ impl FunctionalGroup {
             18 => Ok(FunctionalGroup {
                 id: 18,
                 subgroup: "CH3CO".to_string(),
-                maingroup: "[9]CH2CO".to_string(),
+                main_id: 9,
                 nu: amount,
                 r: 1.6724,
                 q: 1.4880,
@@ -158,7 +158,7 @@ impl FunctionalGroup {
             19 => Ok(FunctionalGroup {
                 id: 19,
                 subgroup: "CH2CO".to_string(),
-                maingroup: "[9]CH2CO".to_string(),
+                main_id: 9,
                 nu: amount,
                 r: 1.4457,
                 q: 1.1800,
@@ -166,7 +166,7 @@ impl FunctionalGroup {
             20 => Ok(FunctionalGroup {
                 id: 20,
                 subgroup: "CHO".to_string(),
-                maingroup: "[10]CHO".to_string(),
+                main_id: 10,
                 nu: amount,
                 r: 0.9980,
                 q: 0.9480,
@@ -174,7 +174,7 @@ impl FunctionalGroup {
             21 => Ok(FunctionalGroup {
                 id: 21,
                 subgroup: "CH3COO".to_string(),
-                maingroup: "[11]CCOO".to_string(),
+                main_id: 11,
                 nu: amount,
                 r: 1.9031,
                 q: 1.7280,
@@ -182,7 +182,7 @@ impl FunctionalGroup {
             22 => Ok(FunctionalGroup {
                 id: 22,
                 subgroup: "CH2COO".to_string(),
-                maingroup: "[11]CCOO".to_string(),
+                main_id: 11,
                 nu: amount,
                 r: 1.6764,
                 q: 1.4200,
@@ -190,7 +190,7 @@ impl FunctionalGroup {
             23 => Ok(FunctionalGroup {
                 id: 23,
                 subgroup: "HCOO".to_string(),
-                maingroup: "[12]HCOO".to_string(),
+                main_id: 12,
                 nu: amount,
                 r: 1.2420,
                 q: 1.1880,
@@ -198,7 +198,7 @@ impl FunctionalGroup {
             24 => Ok(FunctionalGroup {
                 id: 24,
                 subgroup: "CH3O".to_string(),
-                maingroup: "[13]CH2O".to_string(),
+                main_id: 13,
                 nu: amount,
                 r: 1.1450,
                 q: 1.0880,
@@ -206,7 +206,7 @@ impl FunctionalGroup {
             25 => Ok(FunctionalGroup {
                 id: 25,
                 subgroup: "CH2O".to_string(),
-                maingroup: "[13]CH2O".to_string(),
+                main_id: 13,
                 nu: amount,
                 r: 0.9183,
                 q: 0.7800,
@@ -214,7 +214,7 @@ impl FunctionalGroup {
             26 => Ok(FunctionalGroup {
                 id: 26,
                 subgroup: "CHO".to_string(),
-                maingroup: "[13]CH2O".to_string(),
+                main_id: 13,
                 nu: amount,
                 r: 0.6908,
                 q: 0.4680,
@@ -222,7 +222,7 @@ impl FunctionalGroup {
             27 => Ok(FunctionalGroup {
                 id: 27,
                 subgroup: "THF".to_string(),
-                maingroup: "[13]CH2O".to_string(),
+                main_id: 13,
                 nu: amount,
                 r: 0.9183,
                 q: 1.1000,
@@ -230,7 +230,7 @@ impl FunctionalGroup {
             28 => Ok(FunctionalGroup {
                 id: 28,
                 subgroup: "CH3NH2".to_string(),
-                maingroup: "[14]CNH2".to_string(),
+                main_id: 14,
                 nu: amount,
                 r: 1.5959,
                 q: 1.5440,
@@ -238,7 +238,7 @@ impl FunctionalGroup {
             29 => Ok(FunctionalGroup {
                 id: 29,
                 subgroup: "CH2NH2".to_string(),
-                maingroup: "[14]CNH2".to_string(),
+                main_id: 14,
                 nu: amount,
                 r: 1.3692,
                 q: 1.2360,
@@ -246,7 +246,7 @@ impl FunctionalGroup {
             30 => Ok(FunctionalGroup {
                 id: 30,
                 subgroup: "CHNH2".to_string(),
-                maingroup: "[14]CNH2".to_string(),
+                main_id: 14,
                 nu: amount,
                 r: 1.1417,
                 q: 0.9240,
@@ -254,7 +254,7 @@ impl FunctionalGroup {
             31 => Ok(FunctionalGroup {
                 id: 31,
                 subgroup: "CH3NH".to_string(),
-                maingroup: "[15]CNH".to_string(),
+                main_id: 15,
                 nu: amount,
                 r: 1.4337,
                 q: 1.2440,
@@ -262,7 +262,7 @@ impl FunctionalGroup {
             32 => Ok(FunctionalGroup {
                 id: 32,
                 subgroup: "CH2NH".to_string(),
-                maingroup: "[15]CNH".to_string(),
+                main_id: 15,
                 nu: amount,
                 r: 1.2070,
                 q: 0.9360,
@@ -270,7 +270,7 @@ impl FunctionalGroup {
             33 => Ok(FunctionalGroup {
                 id: 33,
                 subgroup: "CHNH".to_string(),
-                maingroup: "[15]CNH".to_string(),
+                main_id: 15,
                 nu: amount,
                 r: 0.9795,
                 q: 0.6240,
@@ -278,7 +278,7 @@ impl FunctionalGroup {
             34 => Ok(FunctionalGroup {
                 id: 34,
                 subgroup: "CH3N".to_string(),
-                maingroup: "[16](C)3N".to_string(),
+                main_id: 16,
                 nu: amount,
                 r: 1.1865,
                 q: 0.9400,
@@ -286,7 +286,7 @@ impl FunctionalGroup {
             35 => Ok(FunctionalGroup {
                 id: 35,
                 subgroup: "CH2N".to_string(),
-                maingroup: "[16](C)3N".to_string(),
+                main_id: 16,
                 nu: amount,
                 r: 0.9597,
                 q: 0.6320,
@@ -294,7 +294,7 @@ impl FunctionalGroup {
             36 => Ok(FunctionalGroup {
                 id: 36,
                 subgroup: "ACNH2".to_string(),
-                maingroup: "[17]ACNH2".to_string(),
+                main_id: 17,
                 nu: amount,
                 r: 1.0600,
                 q: 0.8160,
@@ -302,7 +302,7 @@ impl FunctionalGroup {
             37 => Ok(FunctionalGroup {
                 id: 37,
                 subgroup: "C5H5N".to_string(),
-                maingroup: "[18]PYRIDINE".to_string(),
+                main_id: 18,
                 nu: amount,
                 r: 2.9993,
                 q: 2.1130,
@@ -310,7 +310,7 @@ impl FunctionalGroup {
             38 => Ok(FunctionalGroup {
                 id: 38,
                 subgroup: "C5H4N".to_string(),
-                maingroup: "[18]PYRIDINE".to_string(),
+                main_id: 18,
                 nu: amount,
                 r: 2.8332,
                 q: 1.8330,
@@ -318,7 +318,7 @@ impl FunctionalGroup {
             39 => Ok(FunctionalGroup {
                 id: 39,
                 subgroup: "C5H3N".to_string(),
-                maingroup: "[18]PYRIDINE".to_string(),
+                main_id: 18,
                 nu: amount,
                 r: 2.6670,
                 q: 1.5530,
@@ -326,7 +326,7 @@ impl FunctionalGroup {
             40 => Ok(FunctionalGroup {
                 id: 40,
                 subgroup: "CH3CN".to_string(),
-                maingroup: "[19]CCN".to_string(),
+                main_id: 19,
                 nu: amount,
                 r: 1.8701,
                 q: 1.7240,
@@ -334,7 +334,7 @@ impl FunctionalGroup {
             41 => Ok(FunctionalGroup {
                 id: 41,
                 subgroup: "CH2CN".to_string(),
-                maingroup: "[19]CCN".to_string(),
+                main_id: 19,
                 nu: amount,
                 r: 1.6434,
                 q: 1.4160,
@@ -342,7 +342,7 @@ impl FunctionalGroup {
             42 => Ok(FunctionalGroup {
                 id: 42,
                 subgroup: "COOH".to_string(),
-                maingroup: "[20]COOH".to_string(),
+                main_id: 20,
                 nu: amount,
                 r: 1.3013,
                 q: 1.2240,
@@ -350,7 +350,7 @@ impl FunctionalGroup {
             43 => Ok(FunctionalGroup {
                 id: 43,
                 subgroup: "HCOOH".to_string(),
-                maingroup: "[20]COOH".to_string(),
+                main_id: 20,
                 nu: amount,
                 r: 1.5280,
                 q: 1.5320,
@@ -358,7 +358,7 @@ impl FunctionalGroup {
             44 => Ok(FunctionalGroup {
                 id: 44,
                 subgroup: "CH2CL".to_string(),
-                maingroup: "[21]CCL".to_string(),
+                main_id: 21,
                 nu: amount,
                 r: 1.4654,
                 q: 1.2640,
@@ -366,7 +366,7 @@ impl FunctionalGroup {
             45 => Ok(FunctionalGroup {
                 id: 45,
                 subgroup: "CHCL".to_string(),
-                maingroup: "[21]CCL".to_string(),
+                main_id: 21,
                 nu: amount,
                 r: 1.2380,
                 q: 0.9520,
@@ -374,7 +374,7 @@ impl FunctionalGroup {
             46 => Ok(FunctionalGroup {
                 id: 46,
                 subgroup: "CCL".to_string(),
-                maingroup: "[21]CCL".to_string(),
+                main_id: 21,
                 nu: amount,
                 r: 1.0106,
                 q: 0.7240,
@@ -382,7 +382,7 @@ impl FunctionalGroup {
             47 => Ok(FunctionalGroup {
                 id: 47,
                 subgroup: "CH2CL2".to_string(),
-                maingroup: "[22]CCL2".to_string(),
+                main_id: 22,
                 nu: amount,
                 r: 2.2564,
                 q: 1.9880,
@@ -390,7 +390,7 @@ impl FunctionalGroup {
             48 => Ok(FunctionalGroup {
                 id: 48,
                 subgroup: "CHCL2".to_string(),
-                maingroup: "[22]CCL2".to_string(),
+                main_id: 22,
                 nu: amount,
                 r: 2.0606,
                 q: 1.6840,
@@ -398,7 +398,7 @@ impl FunctionalGroup {
             49 => Ok(FunctionalGroup {
                 id: 49,
                 subgroup: "CCL2".to_string(),
-                maingroup: "[22]CCL2".to_string(),
+                main_id: 22,
                 nu: amount,
                 r: 1.8016,
                 q: 1.4480,
@@ -406,7 +406,7 @@ impl FunctionalGroup {
             50 => Ok(FunctionalGroup {
                 id: 50,
                 subgroup: "CHCL3".to_string(),
-                maingroup: "[23]CCL3".to_string(),
+                main_id: 23,
                 nu: amount,
                 r: 2.8700,
                 q: 2.4100,
@@ -414,7 +414,7 @@ impl FunctionalGroup {
             51 => Ok(FunctionalGroup {
                 id: 51,
                 subgroup: "CCL3".to_string(),
-                maingroup: "[23]CCL3".to_string(),
+                main_id: 23,
                 nu: amount,
                 r: 2.6401,
                 q: 2.1840,
@@ -422,7 +422,7 @@ impl FunctionalGroup {
             52 => Ok(FunctionalGroup {
                 id: 52,
                 subgroup: "CCL4".to_string(),
-                maingroup: "[24]CCL4".to_string(),
+                main_id: 24,
                 nu: amount,
                 r: 3.3900,
                 q: 2.9100,
@@ -430,7 +430,7 @@ impl FunctionalGroup {
             53 => Ok(FunctionalGroup {
                 id: 53,
                 subgroup: "ACCL".to_string(),
-                maingroup: "[25]ACCL".to_string(),
+                main_id: 25,
                 nu: amount,
                 r: 1.1562,
                 q: 0.8440,
@@ -438,7 +438,7 @@ impl FunctionalGroup {
             54 => Ok(FunctionalGroup {
                 id: 54,
                 subgroup: "CH3NO2".to_string(),
-                maingroup: "[26]CNO2".to_string(),
+                main_id: 26,
                 nu: amount,
                 r: 2.0086,
                 q: 1.8680,
@@ -446,7 +446,7 @@ impl FunctionalGroup {
             55 => Ok(FunctionalGroup {
                 id: 55,
                 subgroup: "CH2NO2".to_string(),
-                maingroup: "[26]CNO2".to_string(),
+                main_id: 26,
                 nu: amount,
                 r: 1.7818,
                 q: 1.5600,
@@ -454,7 +454,7 @@ impl FunctionalGroup {
             56 => Ok(FunctionalGroup {
                 id: 56,
                 subgroup: "CHNO2".to_string(),
-                maingroup: "[26]CNO2".to_string(),
+                main_id: 26,
                 nu: amount,
                 r: 1.5544,
                 q: 1.2480,
@@ -462,7 +462,7 @@ impl FunctionalGroup {
             57 => Ok(FunctionalGroup {
                 id: 57,
                 subgroup: "ACNO2".to_string(),
-                maingroup: "[27]ACNO2".to_string(),
+                main_id: 27,
                 nu: amount,
                 r: 1.4199,
                 q: 1.1040,
@@ -470,7 +470,7 @@ impl FunctionalGroup {
             58 => Ok(FunctionalGroup {
                 id: 58,
                 subgroup: "CS2".to_string(),
-                maingroup: "[28]CS2".to_string(),
+                main_id: 28,
                 nu: amount,
                 r: 2.0570,
                 q: 1.6500,
@@ -478,7 +478,7 @@ impl FunctionalGroup {
             59 => Ok(FunctionalGroup {
                 id: 59,
                 subgroup: "CH3SH".to_string(),
-                maingroup: "[29]CH3SH".to_string(),
+                main_id: 29,
                 nu: amount,
                 r: 1.8770,
                 q: 1.6760,
@@ -486,7 +486,7 @@ impl FunctionalGroup {
             60 => Ok(FunctionalGroup {
                 id: 60,
                 subgroup: "CH2SH".to_string(),
-                maingroup: "[29]CH3SH".to_string(),
+                main_id: 29,
                 nu: amount,
                 r: 1.6510,
                 q: 1.3680,
@@ -494,7 +494,7 @@ impl FunctionalGroup {
             61 => Ok(FunctionalGroup {
                 id: 61,
                 subgroup: "FURFURAL".to_string(),
-                maingroup: "[30]FURFURAL".to_string(),
+                main_id: 30,
                 nu: amount,
                 r: 3.1680,
                 q: 2.4840,
@@ -502,7 +502,7 @@ impl FunctionalGroup {
             62 => Ok(FunctionalGroup {
                 id: 62,
                 subgroup: "DOH".to_string(),
-                maingroup: "[31]DOH".to_string(),
+                main_id: 31,
                 nu: amount,
                 r: 2.4088,
                 q: 2.2480,
@@ -510,7 +510,7 @@ impl FunctionalGroup {
             63 => Ok(FunctionalGroup {
                 id: 63,
                 subgroup: "I".to_string(),
-                maingroup: "[32]I".to_string(),
+                main_id: 32,
                 nu: amount,
                 r: 1.2640,
                 q: 0.9920,
@@ -518,7 +518,7 @@ impl FunctionalGroup {
             64 => Ok(FunctionalGroup {
                 id: 64,
                 subgroup: "BR".to_string(),
-                maingroup: "[33]BR".to_string(),
+                main_id: 33,
                 nu: amount,
                 r: 0.9492,
                 q: 0.8320,
@@ -526,7 +526,7 @@ impl FunctionalGroup {
             65 => Ok(FunctionalGroup {
                 id: 65,
                 subgroup: "CH=-C".to_string(),
-                maingroup: "[34]C=-C".to_string(),
+                main_id: 34,
                 nu: amount,
                 r: 1.2920,
                 q: 1.0880,
@@ -534,7 +534,7 @@ impl FunctionalGroup {
             66 => Ok(FunctionalGroup {
                 id: 66,
                 subgroup: "C=-C".to_string(),
-                maingroup: "[34]C=-C".to_string(),
+                main_id: 34,
                 nu: amount,
                 r: 1.0613,
                 q: 0.7840,
@@ -542,7 +542,7 @@ impl FunctionalGroup {
             67 => Ok(FunctionalGroup {
                 id: 67,
                 subgroup: "DMSO".to_string(),
-                maingroup: "[35]DMSO".to_string(),
+                main_id: 35,
                 nu: amount,
                 r: 2.8266,
                 q: 2.4720,
@@ -550,7 +550,7 @@ impl FunctionalGroup {
             68 => Ok(FunctionalGroup {
                 id: 68,
                 subgroup: "ACRY".to_string(),
-                maingroup: "[36]ACRY".to_string(),
+                main_id: 36,
                 nu: amount,
                 r: 2.3144,
                 q: 2.0520,
@@ -558,7 +558,7 @@ impl FunctionalGroup {
             69 => Ok(FunctionalGroup {
                 id: 69,
                 subgroup: "CL-(C=C)".to_string(),
-                maingroup: "[37]CLCC".to_string(),
+                main_id: 37,
                 nu: amount,
                 r: 0.7910,
                 q: 0.7240,
@@ -566,7 +566,7 @@ impl FunctionalGroup {
             70 => Ok(FunctionalGroup {
                 id: 70,
                 subgroup: "C=C".to_string(),
-                maingroup: "[2]C=C".to_string(),
+                main_id: 2,
                 nu: amount,
                 r: 0.6605,
                 q: 0.4850,
@@ -574,7 +574,7 @@ impl FunctionalGroup {
             71 => Ok(FunctionalGroup {
                 id: 71,
                 subgroup: "ACF".to_string(),
-                maingroup: "[38]ACF".to_string(),
+                main_id: 38,
                 nu: amount,
                 r: 0.6948,
                 q: 0.5240,
@@ -582,7 +582,7 @@ impl FunctionalGroup {
             72 => Ok(FunctionalGroup {
                 id: 72,
                 subgroup: "DMF".to_string(),
-                maingroup: "[39]DMF".to_string(),
+                main_id: 39,
                 nu: amount,
                 r: 3.0856,
                 q: 2.7360,
@@ -590,7 +590,7 @@ impl FunctionalGroup {
             73 => Ok(FunctionalGroup {
                 id: 73,
                 subgroup: "HCON(..".to_string(),
-                maingroup: "[39]DMF".to_string(),
+                main_id: 39,
                 nu: amount,
                 r: 2.6322,
                 q: 2.1200,
@@ -598,7 +598,7 @@ impl FunctionalGroup {
             74 => Ok(FunctionalGroup {
                 id: 74,
                 subgroup: "CF3".to_string(),
-                maingroup: "[40]CF2".to_string(),
+                main_id: 40,
                 nu: amount,
                 r: 1.4060,
                 q: 1.3800,
@@ -606,7 +606,7 @@ impl FunctionalGroup {
             75 => Ok(FunctionalGroup {
                 id: 75,
                 subgroup: "CF2".to_string(),
-                maingroup: "[40]CF2".to_string(),
+                main_id: 40,
                 nu: amount,
                 r: 1.0105,
                 q: 0.9200,
@@ -614,7 +614,7 @@ impl FunctionalGroup {
             76 => Ok(FunctionalGroup {
                 id: 76,
                 subgroup: "CF".to_string(),
-                maingroup: "[40]CF2".to_string(),
+                main_id: 40,
                 nu: amount,
                 r: 0.6150,
                 q: 0.4600,
@@ -622,7 +622,7 @@ impl FunctionalGroup {
             77 => Ok(FunctionalGroup {
                 id: 77,
                 subgroup: "COO".to_string(),
-                maingroup: "[41]COO".to_string(),
+                main_id: 41,
                 nu: amount,
                 r: 1.3800,
                 q: 1.2000,
@@ -630,7 +630,7 @@ impl FunctionalGroup {
             78 => Ok(FunctionalGroup {
                 id: 78,
                 subgroup: "SIH3".to_string(),
-                maingroup: "[42]SIH2".to_string(),
+                main_id: 42,
                 nu: amount,
                 r: 1.6035,
                 q: 1.2632,
@@ -638,7 +638,7 @@ impl FunctionalGroup {
             79 => Ok(FunctionalGroup {
                 id: 79,
                 subgroup: "SIH2".to_string(),
-                maingroup: "[42]SIH2".to_string(),
+                main_id: 42,
                 nu: amount,
                 r: 1.4443,
                 q: 1.0063,
@@ -646,7 +646,7 @@ impl FunctionalGroup {
             80 => Ok(FunctionalGroup {
                 id: 80,
                 subgroup: "SIH".to_string(),
-                maingroup: "[42]SIH2".to_string(),
+                main_id: 42,
                 nu: amount,
                 r: 1.2853,
                 q: 0.7494,
@@ -654,7 +654,7 @@ impl FunctionalGroup {
             81 => Ok(FunctionalGroup {
                 id: 81,
                 subgroup: "SI".to_string(),
-                maingroup: "[42]SIH2".to_string(),
+                main_id: 42,
                 nu: amount,
                 r: 1.0470,
                 q: 0.4099,
@@ -662,7 +662,7 @@ impl FunctionalGroup {
             82 => Ok(FunctionalGroup {
                 id: 82,
                 subgroup: "SIH2O".to_string(),
-                maingroup: "[43]SIO".to_string(),
+                main_id: 43,
                 nu: amount,
                 r: 1.4838,
                 q: 1.0621,
@@ -670,7 +670,7 @@ impl FunctionalGroup {
             83 => Ok(FunctionalGroup {
                 id: 83,
                 subgroup: "SIHO".to_string(),
-                maingroup: "[43]SIO".to_string(),
+                main_id: 43,
                 nu: amount,
                 r: 1.3030,
                 q: 0.7639,
@@ -678,7 +678,7 @@ impl FunctionalGroup {
             84 => Ok(FunctionalGroup {
                 id: 84,
                 subgroup: "SIO".to_string(),
-                maingroup: "[43]SIO".to_string(),
+                main_id: 43,
                 nu: amount,
                 r: 1.1044,
                 q: 0.4657,
@@ -686,7 +686,7 @@ impl FunctionalGroup {
             85 => Ok(FunctionalGroup {
                 id: 85,
                 subgroup: "NMP".to_string(),
-                maingroup: "[44]NMP".to_string(),
+                main_id: 44,
                 nu: amount,
                 r: 3.9810,
                 q: 3.2000,
@@ -694,7 +694,7 @@ impl FunctionalGroup {
             86 => Ok(FunctionalGroup {
                 id: 86,
                 subgroup: "CCL3F".to_string(),
-                maingroup: "[45]CCLF".to_string(),
+                main_id: 45,
                 nu: amount,
                 r: 3.0356,
                 q: 2.6440,
@@ -702,7 +702,7 @@ impl FunctionalGroup {
             87 => Ok(FunctionalGroup {
                 id: 87,
                 subgroup: "CCL2F".to_string(),
-                maingroup: "[45]CCLF".to_string(),
+                main_id: 45,
                 nu: amount,
                 r: 2.2287,
                 q: 1.9160,
@@ -710,7 +710,7 @@ impl FunctionalGroup {
             88 => Ok(FunctionalGroup {
                 id: 88,
                 subgroup: "HCCL2F".to_string(),
-                maingroup: "[45]CCLF".to_string(),
+                main_id: 45,
                 nu: amount,
                 r: 2.4060,
                 q: 2.1160,
@@ -718,7 +718,7 @@ impl FunctionalGroup {
             89 => Ok(FunctionalGroup {
                 id: 89,
                 subgroup: "HCCLF".to_string(),
-                maingroup: "[45]CCLF".to_string(),
+                main_id: 45,
                 nu: amount,
                 r: 1.6493,
                 q: 1.4160,
@@ -726,7 +726,7 @@ impl FunctionalGroup {
             90 => Ok(FunctionalGroup {
                 id: 90,
                 subgroup: "CCLF2".to_string(),
-                maingroup: "[45]CCLF".to_string(),
+                main_id: 45,
                 nu: amount,
                 r: 1.8174,
                 q: 1.6480,
@@ -734,7 +734,7 @@ impl FunctionalGroup {
             91 => Ok(FunctionalGroup {
                 id: 91,
                 subgroup: "HCCLF2".to_string(),
-                maingroup: "[45]CCLF".to_string(),
+                main_id: 45,
                 nu: amount,
                 r: 1.9670,
                 q: 1.8280,
@@ -742,7 +742,7 @@ impl FunctionalGroup {
             92 => Ok(FunctionalGroup {
                 id: 92,
                 subgroup: "CCLF3".to_string(),
-                maingroup: "[45]CCLF".to_string(),
+                main_id: 45,
                 nu: amount,
                 r: 2.1721,
                 q: 2.1000,
@@ -750,7 +750,7 @@ impl FunctionalGroup {
             93 => Ok(FunctionalGroup {
                 id: 93,
                 subgroup: "CCL2F2".to_string(),
-                maingroup: "[45]CCLF".to_string(),
+                main_id: 45,
                 nu: amount,
                 r: 2.6243,
                 q: 2.3760,
@@ -758,7 +758,7 @@ impl FunctionalGroup {
             94 => Ok(FunctionalGroup {
                 id: 94,
                 subgroup: "AMH2".to_string(),
-                maingroup: "[46]CON(AM)".to_string(),
+                main_id: 46,
                 nu: amount,
                 r: 1.4515,
                 q: 1.2480,
@@ -766,7 +766,7 @@ impl FunctionalGroup {
             95 => Ok(FunctionalGroup {
                 id: 95,
                 subgroup: "AMHCH3".to_string(),
-                maingroup: "[46]CON(AM)".to_string(),
+                main_id: 46,
                 nu: amount,
                 r: 2.1905,
                 q: 1.7960,
@@ -774,7 +774,7 @@ impl FunctionalGroup {
             96 => Ok(FunctionalGroup {
                 id: 96,
                 subgroup: "AMHCH2".to_string(),
-                maingroup: "[46]CON(AM)".to_string(),
+                main_id: 46,
                 nu: amount,
                 r: 1.9637,
                 q: 1.4880,
@@ -782,7 +782,7 @@ impl FunctionalGroup {
             97 => Ok(FunctionalGroup {
                 id: 97,
                 subgroup: "AM(CH3)2".to_string(),
-                maingroup: "[46]CON(AM)".to_string(),
+                main_id: 46,
                 nu: amount,
                 r: 2.8589,
                 q: 2.4280,
@@ -790,7 +790,7 @@ impl FunctionalGroup {
             98 => Ok(FunctionalGroup {
                 id: 98,
                 subgroup: "AMCH3CH2".to_string(),
-                maingroup: "[46]CON(AM)".to_string(),
+                main_id: 46,
                 nu: amount,
                 r: 2.6322,
                 q: 2.1200,
@@ -798,7 +798,7 @@ impl FunctionalGroup {
             99 => Ok(FunctionalGroup {
                 id: 99,
                 subgroup: "AM(CH2)2".to_string(),
-                maingroup: "[46]CON(AM)".to_string(),
+                main_id: 46,
                 nu: amount,
                 r: 2.4054,
                 q: 1.8120,
@@ -806,7 +806,7 @@ impl FunctionalGroup {
             100 => Ok(FunctionalGroup {
                 id: 100,
                 subgroup: "C2H5O2".to_string(),
-                maingroup: "[47]OCCOH".to_string(),
+                main_id: 47,
                 nu: amount,
                 r: 2.1226,
                 q: 1.9040,
@@ -814,7 +814,7 @@ impl FunctionalGroup {
             101 => Ok(FunctionalGroup {
                 id: 101,
                 subgroup: "C2H4O2".to_string(),
-                maingroup: "[47]OCCOH".to_string(),
+                main_id: 47,
                 nu: amount,
                 r: 1.8952,
                 q: 1.5920,
@@ -822,7 +822,7 @@ impl FunctionalGroup {
             102 => Ok(FunctionalGroup {
                 id: 102,
                 subgroup: "CH3S".to_string(),
-                maingroup: "[48]CH2S".to_string(),
+                main_id: 48,
                 nu: amount,
                 r: 1.6130,
                 q: 1.3680,
@@ -830,7 +830,7 @@ impl FunctionalGroup {
             103 => Ok(FunctionalGroup {
                 id: 103,
                 subgroup: "CH2S".to_string(),
-                maingroup: "[48]CH2S".to_string(),
+                main_id: 48,
                 nu: amount,
                 r: 1.3863,
                 q: 1.0600,
@@ -838,7 +838,7 @@ impl FunctionalGroup {
             104 => Ok(FunctionalGroup {
                 id: 104,
                 subgroup: "CHS".to_string(),
-                maingroup: "[48]CH2S".to_string(),
+                main_id: 48,
                 nu: amount,
                 r: 1.1589,
                 q: 0.7480,
@@ -846,7 +846,7 @@ impl FunctionalGroup {
             105 => Ok(FunctionalGroup {
                 id: 105,
                 subgroup: "MORPH".to_string(),
-                maingroup: "[49]MORPH".to_string(),
+                main_id: 49,
                 nu: amount,
                 r: 3.4740,
                 q: 2.7960,
@@ -854,7 +854,7 @@ impl FunctionalGroup {
             106 => Ok(FunctionalGroup {
                 id: 106,
                 subgroup: "C4H4S".to_string(),
-                maingroup: "[50]THIOPHEN".to_string(),
+                main_id: 50,
                 nu: amount,
                 r: 2.8569,
                 q: 2.1400,
@@ -862,7 +862,7 @@ impl FunctionalGroup {
             107 => Ok(FunctionalGroup {
                 id: 107,
                 subgroup: "C4H3S".to_string(),
-                maingroup: "[50]THIOPHEN".to_string(),
+                main_id: 50,
                 nu: amount,
                 r: 2.6908,
                 q: 1.8600,
@@ -870,7 +870,7 @@ impl FunctionalGroup {
             108 => Ok(FunctionalGroup {
                 id: 108,
                 subgroup: "C4H2S".to_string(),
-                maingroup: "[50]THIOPHEN".to_string(),
+                main_id: 50,
                 nu: amount,
                 r: 2.5247,
                 q: 1.5800,
@@ -878,7 +878,7 @@ impl FunctionalGroup {
             109 => Ok(FunctionalGroup {
                 id: 109,
                 subgroup: "NCO".to_string(),
-                maingroup: "[51]NCO".to_string(),
+                main_id: 51,
                 nu: amount,
                 r: 1.0567,
                 q: 0.7320,
@@ -886,7 +886,7 @@ impl FunctionalGroup {
             118 => Ok(FunctionalGroup {
                 id: 118,
                 subgroup: "(CH2)2SU".to_string(),
-                maingroup: "[55]SULFONES".to_string(),
+                main_id: 55,
                 nu: amount,
                 r: 2.6869,
                 q: 2.1200,
@@ -894,7 +894,7 @@ impl FunctionalGroup {
             119 => Ok(FunctionalGroup {
                 id: 119,
                 subgroup: "CH2CHSU".to_string(),
-                maingroup: "[55]SULFONES".to_string(),
+                main_id: 55,
                 nu: amount,
                 r: 2.4595,
                 q: 1.8080,
@@ -902,7 +902,7 @@ impl FunctionalGroup {
             178 => Ok(FunctionalGroup {
                 id: 178,
                 subgroup: "IMIDAZOL".to_string(),
-                maingroup: "[84]IMIDAZOL".to_string(),
+                main_id: 84,
                 nu: amount,
                 r: 2.0260,
                 q: 0.8680,
@@ -910,7 +910,7 @@ impl FunctionalGroup {
             179 => Ok(FunctionalGroup {
                 id: 179,
                 subgroup: "BTI".to_string(),
-                maingroup: "[85]BTI".to_string(),
+                main_id: 85,
                 nu: amount,
                 r: 5.7740,
                 q: 4.9320,
@@ -930,7 +930,7 @@ mod tests {
         let group = FunctionalGroup::from(1, 1.0).unwrap();
         assert_eq!(group.id, 1);
         assert_eq!(group.subgroup, "CH3".to_string());
-        assert_eq!(group.maingroup, "[1]CH2".to_string());
+        assert_eq!(group.main_id, 1);
         assert_eq!(group.r, 0.9011);
         assert_eq!(group.q, 0.8480);
         assert_eq!(group.nu, 1.0);
@@ -941,7 +941,7 @@ mod tests {
         let group = FunctionalGroup::from(67, 3.5).unwrap();
         assert_eq!(group.id, 67);
         assert_eq!(group.subgroup, "DMSO".to_string());
-        assert_eq!(group.maingroup, "[35]DMSO".to_string());
+        assert_eq!(group.main_id, 35);
         assert_eq!(group.r, 2.8266);
         assert_eq!(group.q, 2.4720);
         assert_eq!(group.nu, 3.5);
