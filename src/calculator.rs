@@ -141,8 +141,8 @@ mod tests {
 
     #[test]
     fn residual_calculates() {
-        let acetone_value = 0.6709271125908701;
-        let pentane_value = 0.00177787069083582;
+        let acetone_value = 1.6605607656292078;
+        let pentane_value = 0.00534819401527342;
         let acetone = Substance {
             fraction: 0.047,
             functional_groups: vec![
@@ -161,6 +161,8 @@ mod tests {
         };
 
         let resid = calc_residual(0, vec![acetone, pentane], 307.0).unwrap();
+        println!("Acetone: {}", resid[0]);
+        println!("Pentane: {}", resid[1]);
         assert!((resid[0] - acetone_value).abs() < EPSILON);
         assert!((resid[1] - pentane_value).abs() < EPSILON);
     }

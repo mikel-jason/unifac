@@ -65,7 +65,14 @@ pub fn calc_9(id: u8, x_ki: &HashMap<u8, f64>, sum: f64) -> f64 {
 }
 
 pub fn calc_10(i: u8, j: u8, temperature: f64) -> Result<f64, &'static str> {
-    let interp = InteractionParameter::from(i, j)?;
+    let i_maingroup = FunctionalGroup::from(i, 1.0)?.main_id;
+    let j_maingroup = FunctionalGroup::from(j, 1.0)?.main_id;
+    println!("Maingroup of {}: {}", i, i_maingroup);
+    println!("Maingroup of {}: {}", j, j_maingroup);
+    if i_maingroup == j_maingroup {
+        return Ok(1.0);
+    }
+    let interp = InteractionParameter::from(i_maingroup, j_maingroup)?;
     Ok(std::f64::consts::E.powf(-interp.a_ij / temperature))
 }
 
