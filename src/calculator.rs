@@ -50,11 +50,7 @@ fn calc_combinatorial(substances: Vec<Substance>) -> Result<Vec<f64>, &'static s
     Ok(ln_gamma_c_i)
 }
 
-fn calc_residual(
-    i: u8,
-    substances: Vec<Substance>,
-    temperature: f64,
-) -> Result<Vec<f64>, &'static str> {
+fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64>, &'static str> {
     let mut id_list = Vec::new();
     for substance in &substances {
         for fg in &substance.functional_groups {
@@ -251,7 +247,7 @@ mod tests {
             gamma: None,
         };
 
-        let resid = calc_residual(0, vec![acetone, pentane], 307.0).unwrap();
+        let resid = calc_residual(vec![acetone, pentane], 307.0).unwrap();
         println!("Acetone: {}", resid[0]);
         println!("Pentane: {}", resid[1]);
         assert!((resid[0] - acetone_value).abs() < EPSILON);
