@@ -4,8 +4,21 @@ use crate::formula;
 use crate::functional_group::FunctionalGroup;
 use crate::substance::Substance;
 
-pub fn calc(substances: Vec<Substance>, temperature: f64) -> Vec<Substance> {
-    substances
+pub fn calc(substances: Vec<Substance>, temperature: f64) -> Result<Vec<Substance>, &'static str> {
+    let combinatorial = calc_combinatorial(substances.clone())?;
+    let residual = calc_residual(substances.clone(), temperature)?;
+
+    let mut calced_substances: Vec<Substance> = Vec::new();
+    for i in 0..substances.len() {
+        let gamma = (combinatorial[i] + residual[i]).exp();
+
+        calced_substances.push(Substance {
+            fraction: substances[i].fraction.clone(),
+            functional_groups: substances[i].functional_groups.clone(),
+            gamma: Some(gamma),
+        })
+    }
+    Ok(calced_substances)
 }
 
 fn calc_combinatorial(substances: Vec<Substance>) -> Result<Vec<f64>, &'static str> {
@@ -172,6 +185,36 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
 mod tests {
     use super::*;
     const EPSILON: f64 = 0.001;
+
+    #[test]
+    fn calc_mixture() {
+        let acetone_value = 1.2140;
+        let ethanol_value = 1.2168;
+        let acetone = Substance {
+            fraction: 0.5,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
+                FunctionalGroup::from(18, 1.0).unwrap(), // CH3CO
+            ],
+            gamma: None,
+        };
+        let ethanol = Substance {
+            fraction: 0.5,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
+                FunctionalGroup::from(2, 1.0).unwrap(),  // CH2
+                FunctionalGroup::from(14, 1.0).unwrap(), // OH
+            ],
+            gamma: None,
+        };
+
+        let resid = calc(vec![acetone, ethanol], 323.0).unwrap();
+
+        println!("Acetone: {}", resid[0].gamma.unwrap());
+        println!("Ethanol: {}", resid[1].gamma.unwrap());
+        assert!((resid[0].gamma.unwrap() - acetone_value).abs() < EPSILON);
+        assert!((resid[1].gamma.unwrap() - ethanol_value).abs() < EPSILON);
+    }
 
     #[test]
     fn combinatorial_calculates() {
