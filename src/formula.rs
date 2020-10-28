@@ -4,12 +4,67 @@ use crate::functional_group::FunctionalGroup;
 use crate::interaction::InteractionParameter;
 use crate::substance::Substance;
 
-pub fn calc_1(substance: Substance) -> f64 {
-    0.0
+/// Calc 1: Substance's r
+///
+/// # Arguments
+/// - `substance` - Target substance
+pub fn calc_1(substance: &Substance) -> f64 {
+    let mut sum = 0.0;
+    for fg in &substance.functional_groups {
+        sum += fg.nu * fg.r;
+    }
+    sum
 }
 
-pub fn calc_2(substance: Substance) -> f64 {
-    0.0
+/// Calc 2: Substance's q
+///
+/// # Arguments
+/// - `substance` - Target substance
+pub fn calc_2(substance: &Substance) -> f64 {
+    let mut sum = 0.0;
+    for fg in &substance.functional_groups {
+        sum += fg.nu * fg.q;
+    }
+    sum
+}
+
+/// Calc 3: Substance's intermediate value phi
+///
+/// # Arguments
+/// - `id` - Index of the substance, phi should be calced for
+/// - `substances` - All substances
+/// - `r_i` - Vec containing the substances' r_i (ordered as `substances`)
+pub fn calc_3(id: usize, substances: &Vec<Substance>, r_i: &Vec<f64>) -> f64 {
+    let mut sum = 0.0;
+    for i in 0..substances.len() {
+        sum += substances[i].fraction * r_i[i];
+    }
+    r_i[id] * substances[id].fraction / sum
+}
+
+/// Calc 4: Substance's intermediate value theta
+///
+/// # Arguments
+/// - `id` - Index of the substance in `substances`, phi should be calced for
+/// - `substances` - All substances
+/// - `q_i` - Vec containing the substances' q_i (ordered as `substances`)
+pub fn calc_4(id: usize, substances: &Vec<Substance>, q_i: &Vec<f64>) -> f64 {
+    let mut sum = 0.0;
+    for i in 0..substances.len() {
+        sum += substances[i].fraction * q_i[i];
+    }
+    q_i[id] * substances[id].fraction / sum
+}
+
+/// Calc 5: Substance's intermediate value l
+///
+/// Implicitly uses constant `z` as 10
+///
+/// # Arguments
+/// - `r` - Target substance's `r_i`
+/// - `q` - Target substance's `q_i`
+pub fn calc_5(r: f64, q: f64) -> f64 {
+    5.0 * (r - q) - (r - 1.0)
 }
 
 /// Calc 6: Substances's intermediate value X
@@ -201,11 +256,130 @@ pub fn calc_13(substance: &Substance, gamma_k: &Vec<f64>, gamma_i_k: &Vec<f64>) 
     sum
 }
 
+/// Calc 15: Sustance's combinatorial activity coeff. part
+///
+/// Calcs the sum across all substances used as denominator
+///
+/// # Arguments
+/// - `substances` - All substances
+/// - `l_i` - Substances' l_i (ordered as `substances`)
+pub fn calc_15_sum(substances: &Vec<Substance>, l_i: &Vec<f64>) -> f64 {
+    let mut sum = 0.0;
+    for i in 0..substances.len() {
+        sum += substances[i].fraction * l_i[i];
+    }
+    sum
+}
+
+/// Calc 15: Sustance's combinatorial activity coeff. part
+///
+/// Calcs the sum across all substances used as denominator
+///
+/// # Arguments
+/// - `x` - Substance's fraction
+/// - `q` - Substance's `q`
+/// - `phi` - Substances `phi`
+/// - `theta` - Substances `theta`
+/// - `l` - Substances `l`
+/// - `sum_lx` - Sum (denominator), see calc_15_sum
+pub fn calc_15(x: f64, q: f64, phi: f64, theta: f64, l: f64, sum_lx: f64) -> f64 {
+    println!("x: {:?}", x);
+    println!("q: {:?}", q);
+    println!("phi: {:?}", phi);
+    println!("theta: {:?}", theta);
+    println!("l: {:?}", l);
+    println!("sum_lx: {:?}", sum_lx);
+
+    // println!("ln ({:?} / {:?}) + 5 * {:?} * ln({:?} / {:?})", phi, x, q ,theta, phi);
+    // println!("+ {:?} - {:?} / {:?} * {:?}", l, phi, x, sum_lx);
+
+    let mut res = (phi / x).ln();
+    // println!("{:?}", res);
+    res += 5.0 * q * (theta / phi).ln();
+    // println!("{:?}", res);
+    res += l;
+    res - phi / x * sum_lx
+}
+
 // Unit tests
 #[cfg(test)]
 mod tests {
     use super::*;
     const EPSILON: f64 = 0.001;
+
+    #[test]
+    fn calc_1() {
+        let substance = Substance {
+            fraction: 1.0,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),
+                FunctionalGroup::from(2, 1.0).unwrap(),
+                FunctionalGroup::from(4, 3.0).unwrap(),
+            ],
+            gamma: None,
+        };
+        let test = super::calc_1(&substance);
+        assert_eq!(test, 2.234);
+    }
+
+    #[test]
+    fn calc_2() {
+        let substance = Substance {
+            fraction: 1.0,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),
+                FunctionalGroup::from(2, 1.0).unwrap(),
+                FunctionalGroup::from(4, 3.0).unwrap(),
+            ],
+            gamma: None,
+        };
+        let test = super::calc_2(&substance);
+        assert_eq!(test, 1.388);
+    }
+
+    #[test]
+    fn calc_3() {
+        let ethane = Substance {
+            fraction: 0.5,
+            functional_groups: vec![FunctionalGroup::from(1, 2.0).unwrap()],
+            gamma: None,
+        };
+        let benzene = Substance {
+            fraction: 0.5,
+            functional_groups: vec![FunctionalGroup::from(9, 6.0).unwrap()],
+            gamma: None,
+        };
+        let substances = vec![ethane, benzene];
+        let r_i = vec![0.9011 * 2.0, 0.5313 * 6.0];
+        let val = super::calc_3(0, &substances, &r_i);
+        let rounded = (val * 10000.0).round() / 10000.0;
+        assert_eq!(rounded, 0.3612);
+    }
+
+    #[test]
+    fn calc_4() {
+        let ethane = Substance {
+            fraction: 0.5,
+            functional_groups: vec![FunctionalGroup::from(1, 2.0).unwrap()],
+            gamma: None,
+        };
+        let benzene = Substance {
+            fraction: 0.5,
+            functional_groups: vec![FunctionalGroup::from(9, 6.0).unwrap()],
+            gamma: None,
+        };
+        let substances = vec![ethane, benzene];
+        let q_i = vec![0.8480 * 2.0, 0.4 * 6.0];
+        let val = super::calc_4(0, &substances, &q_i);
+        let rounded = (val * 10000.0).round() / 10000.0;
+        assert_eq!(rounded, 0.4141);
+    }
+
+    #[test]
+    fn calc_5() {
+        let test = super::calc_5(2.0, 3.0);
+        assert_eq!(test, -6.0);
+    }
 
     #[test]
     fn calc_6() {
@@ -339,4 +513,34 @@ mod tests {
         let actual = super::calc_13(&ethane, &gamma_k, &gamma_i_k);
         assert!((expected - actual).abs() < EPSILON);
     }
+
+    #[test]
+    fn calc_15_sum() {
+        let ethane = Substance {
+            fraction: 2.0 / 3.0,
+            functional_groups: vec![],
+            gamma: None,
+        };
+        let benzene = Substance {
+            fraction: 1.0 / 3.0,
+            functional_groups: vec![],
+            gamma: None,
+        };
+        let substances = vec![ethane, benzene];
+        let l_i = vec![1.6, 2.2]; // fake values
+        let test = super::calc_15_sum(&substances, &l_i);
+        assert_eq!(test, 1.8);
+    }
+
+    // #[test]
+    // fn calc_15_fredenslund() {
+    //     let x = 0.047;
+    //     let q = 2.336;
+    //     let phi = 0.0321;
+    //     let theta = 0.0336;
+    //     let l = -0.3860;
+    //     let sum = 0.047 * 0.3860 + 0.953 * 0.2784;
+    //     let res = super::calc_15(x, q, phi, theta, l, sum);
+    //     assert_eq!(res, -0.403);
+    // }
 }

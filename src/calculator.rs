@@ -8,8 +8,46 @@ pub fn calc(substances: Vec<Substance>, temperature: f64) -> Vec<Substance> {
     substances
 }
 
-fn calc_combinatorial(i: u8, substances: Vec<Substance>) -> f64 {
-    0.0
+fn calc_combinatorial(substances: Vec<Substance>) -> Result<Vec<f64>, &'static str> {
+    let mut r_i: Vec<f64> = Vec::new();
+    let mut q_i: Vec<f64> = Vec::new();
+    let mut phi_i: Vec<f64> = Vec::new();
+    let mut theta_i: Vec<f64> = Vec::new();
+    let mut l_i: Vec<f64> = Vec::new();
+    let mut ln_gamma_c_i: Vec<f64> = Vec::new();
+
+    for substance in &substances {
+        r_i.push(formula::calc_1(&substance));
+        q_i.push(formula::calc_2(&substance));
+    }
+
+    println!("r_i: {:?}", r_i);
+    println!("q_i: {:?}", q_i);
+
+    for i in 0..substances.len() {
+        phi_i.push(formula::calc_3(i, &substances, &r_i));
+        theta_i.push(formula::calc_4(i, &substances, &q_i));
+        l_i.push(formula::calc_5(r_i[i], q_i[i]));
+    }
+    println!("phi_i: {:?}", phi_i);
+    println!("theta_i: {:?}", theta_i);
+    println!("l_i: {:?}", l_i);
+
+    let sum_lx = formula::calc_15_sum(&substances, &l_i);
+    for i in 0..substances.len() {
+        ln_gamma_c_i.push(formula::calc_15(
+            substances[i].fraction,
+            q_i[i],
+            phi_i[i],
+            theta_i[i],
+            l_i[i],
+            sum_lx,
+        ))
+    }
+
+    println!("ln_gamma_c_i: {:?}", ln_gamma_c_i);
+
+    Ok(ln_gamma_c_i)
 }
 
 fn calc_residual(
@@ -143,19 +181,20 @@ mod tests {
     fn residual_calculates() {
         let acetone_value = 1.6605607656292078;
         let pentane_value = 0.00534819401527342;
+
         let acetone = Substance {
             fraction: 0.047,
             functional_groups: vec![
-                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
-                FunctionalGroup::from(18, 1.0).unwrap(), // CH3CO
+                FunctionalGroup::from(1, 1.0).unwrap(),
+                FunctionalGroup::from(18, 1.0).unwrap(),
             ],
             gamma: None,
         };
         let pentane = Substance {
             fraction: 0.953,
             functional_groups: vec![
-                FunctionalGroup::from(1, 2.0).unwrap(), // CH3
-                FunctionalGroup::from(2, 3.0).unwrap(), // CH2
+                FunctionalGroup::from(1, 2.0).unwrap(),
+                FunctionalGroup::from(2, 3.0).unwrap(),
             ],
             gamma: None,
         };
@@ -165,5 +204,28 @@ mod tests {
         println!("Pentane: {}", resid[1]);
         assert!((resid[0] - acetone_value).abs() < EPSILON);
         assert!((resid[1] - pentane_value).abs() < EPSILON);
+    }
+
+    fn combinatorial_calculates() {
+        // based on Fredenslund 1975, example 2
+        let acetone = Substance {
+            fraction: 0.047,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),
+                FunctionalGroup::from(18, 1.0).unwrap(),
+            ],
+            gamma: None,
+        };
+        let pentane = Substance {
+            fraction: 0.953,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 2.0).unwrap(),
+                FunctionalGroup::from(2, 3.0).unwrap(),
+            ],
+            gamma: None,
+        };
+        let res = calc_combinatorial(vec![acetone, pentane]).unwrap();
+        // assert_eq!(res[0], 4.0);
+        assert!(true);
     }
 }
