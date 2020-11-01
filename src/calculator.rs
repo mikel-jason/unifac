@@ -181,15 +181,17 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
 }
 
 // Unit tests
+// for reference values, see http://ddbonline.ddbst.de/UNIFACCalculation/UNIFACCalculationCGI.exe
 #[cfg(test)]
 mod tests {
     use super::*;
     const EPSILON: f64 = 0.001;
 
     #[test]
-    fn calc_mixture() {
+    fn calc_mixture_acetone_ethanole_50_50() {
         let acetone_value = 1.2140;
         let ethanol_value = 1.2168;
+        let temperature = 323.0;
         let acetone = Substance {
             fraction: 0.5,
             functional_groups: vec![
@@ -208,17 +210,75 @@ mod tests {
             gamma: None,
         };
 
-        let resid = calc(vec![acetone, ethanol], 323.0).unwrap();
+        let resid = calc(vec![acetone, ethanol], temperature).unwrap();
 
-        println!("Acetone: {}", resid[0].gamma.unwrap());
-        println!("Ethanol: {}", resid[1].gamma.unwrap());
         assert!((resid[0].gamma.unwrap() - acetone_value).abs() < EPSILON);
         assert!((resid[1].gamma.unwrap() - ethanol_value).abs() < EPSILON);
     }
 
     #[test]
+    fn calc_mixture_acetone_ethanole_70_30() {
+        let acetone_value = 1.0726;
+        let ethanol_value = 1.4652;
+        let temperature = 323.0;
+        let acetone = Substance {
+            fraction: 0.7,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
+                FunctionalGroup::from(18, 1.0).unwrap(), // CH3CO
+            ],
+            gamma: None,
+        };
+        let ethanol = Substance {
+            fraction: 0.3,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
+                FunctionalGroup::from(2, 1.0).unwrap(),  // CH2
+                FunctionalGroup::from(14, 1.0).unwrap(), // OH
+            ],
+            gamma: None,
+        };
+
+        let resid = calc(vec![acetone, ethanol], temperature).unwrap();
+
+        assert!((resid[0].gamma.unwrap() - acetone_value).abs() < EPSILON);
+        assert!((resid[1].gamma.unwrap() - ethanol_value).abs() < EPSILON);
+    }
+
+    #[test]
+    fn calc_mixture_diethyl_ether_benzene_90_10() {
+        let diethyl_ether_value = 1.0007;
+        let benzene_value = 1.1012;
+        let temperature = 298.0;
+        let diethyl_ether = Substance {
+            fraction: 0.9,
+            functional_groups: vec![
+                FunctionalGroup::from(1, 2.0).unwrap(),  // CH3
+                FunctionalGroup::from(2, 1.0).unwrap(),  // CH2
+                FunctionalGroup::from(25, 1.0).unwrap(), // CH2O
+            ],
+            gamma: None,
+        };
+        let benzene = Substance {
+            fraction: 0.1,
+            functional_groups: vec![
+                FunctionalGroup::from(9, 6.0).unwrap(), // CH3
+            ],
+            gamma: None,
+        };
+
+        let resid = calc(vec![diethyl_ether, benzene], temperature).unwrap();
+
+        assert!((resid[0].gamma.unwrap() - diethyl_ether_value).abs() < EPSILON);
+        assert!((resid[1].gamma.unwrap() - benzene_value).abs() < EPSILON);
+    }
+
+    #[test]
     fn combinatorial_calculates() {
-        // based on Fredenslund 1975, example 2
+        let acetone_value = 0.9837063754024332;
+        let pentane_value = 0.9999607147028443;
+        let temperature = 298.0;
+
         let acetone = Substance {
             fraction: 0.047,
             functional_groups: vec![
@@ -264,9 +324,10 @@ mod tests {
             gamma: None,
         };
 
-        let res = calc_combinatorial(vec![acetone, pentane]).unwrap();
-        // assert_eq!(res[0], 4.0);
-        assert!(true);
+        let resid = calc(vec![acetone, pentane], temperature).unwrap();
+
+        assert!((resid[0].gamma.unwrap() - acetone_value).abs() < EPSILON);
+        assert!((resid[1].gamma.unwrap() - pentane_value).abs() < EPSILON);
     }
 
     #[test]
