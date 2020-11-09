@@ -104,7 +104,7 @@ pub fn calc_7_sum(substances: &Vec<Substance>) -> f64 {
 /// - `id` - id of target functional group
 /// - `sum` - intermediate sum calculated using `calc_7_sum()`
 /// - `substances` - vector of all substances in mixture
-pub fn calc_7(id: u8, sum: f64, substances: &Vec<Substance>) -> f64 {
+pub fn calc_7(id: u8, substances: &Vec<Substance>, sum: f64) -> f64 {
     let mut single_sum = 0.0;
     for substance in substances {
         for fg in &substance.functional_groups {
@@ -120,13 +120,13 @@ pub fn calc_7(id: u8, sum: f64, substances: &Vec<Substance>) -> f64 {
 ///
 /// # Arguments
 /// - `x_k` - Hash map with pairs of functional group id and corresponding X
-pub fn calc_8_sum(x_k: &HashMap<u8, f64>) -> f64 {
+pub fn calc_8_sum(x_k: &HashMap<u8, f64>) -> Result<f64, &'static str> {
     let mut sum = 0.0;
     for (id, x) in x_k {
-        let fg = FunctionalGroup::from(*id, 0.0).unwrap();
+        let fg = FunctionalGroup::from(*id, 0.0)?;
         sum += fg.q * x;
     }
-    sum
+    Ok(sum)
 }
 
 /// Calc 8: Functional group's intermediate value THETA
@@ -135,20 +135,9 @@ pub fn calc_8_sum(x_k: &HashMap<u8, f64>) -> f64 {
 /// - `id` - id of target functional group
 /// - `x_k` - Hash map with pairs of functional group id and corresponding X
 /// - `sum` - intermediate sum calculated using `calc_8_sum()`
-pub fn calc_8(id: u8, x_k: &HashMap<u8, f64>, sum: f64) -> f64 {
-    let fg = FunctionalGroup::from(id, 0.0).unwrap();
-    fg.q * x_k[&id] / sum
-}
-
-/// Calc 9: Substance's intermediate value THETA
-///
-/// # Arguments
-/// - `id` - id of target functional group
-/// - `x_ki` - Hash map with pairs of functional group id and corresponding X (substance's X), only use functional
-/// groups of target substance
-/// - `sum` - intermediate sum calculated using `calc_8_sum()`
-pub fn calc_9(id: u8, x_ki: &HashMap<u8, f64>, sum: f64) -> f64 {
-    calc_8(id, x_ki, sum)
+pub fn calc_8(id: u8, x_k: &HashMap<u8, f64>, sum: f64) -> Result<f64, &'static str> {
+    let fg = FunctionalGroup::from(id, 0.0)?;
+    Ok(fg.q * x_k[&id] / sum)
 }
 
 /// Calc 10: Functional groups' interaction parameter value psi
@@ -160,8 +149,6 @@ pub fn calc_9(id: u8, x_ki: &HashMap<u8, f64>, sum: f64) -> f64 {
 pub fn calc_10(i: u8, j: u8, temperature: f64) -> Result<f64, &'static str> {
     let i_maingroup = FunctionalGroup::from(i, 1.0)?.main_id;
     let j_maingroup = FunctionalGroup::from(j, 1.0)?.main_id;
-    println!("Maingroup of {}: {}", i, i_maingroup);
-    println!("Maingroup of {}: {}", j, j_maingroup);
     if i_maingroup == j_maingroup {
         return Ok(1.0);
     }
@@ -230,16 +217,6 @@ pub fn calc_11_sum_2(
 /// - `sum_2` - value calculated using `calc_11_sum_2()`
 pub fn calc_11(q_k: f64, sum_1: f64, sum_2: f64) -> f64 {
     q_k * (1.0 - sum_1.ln() - sum_2)
-}
-
-/// Calc 12: Functional group's intermediate value ln GAMMA
-///
-/// # Arguments
-/// - `q_k` - value Q of target functional group
-/// - `sum_1` - value calculated using `calc_11_sum_1()`
-/// - `sum_2` - value calculated using `calc_11_sum_2()`
-pub fn calc_12(q_k: f64, sum_1: f64, sum_2: f64) -> f64 {
-    calc_11(q_k, sum_1, sum_2)
 }
 
 /// Calc 13: Substance's intermediate value ln gamma r
@@ -425,7 +402,7 @@ mod tests {
             gamma: None,
         };
         let substances = vec![ethane, benzene];
-        let actual = super::calc_7(1, 4.0, &substances);
+        let actual = super::calc_7(1, &substances, 4.0);
         assert!((expected - actual).abs() < EPSILON);
     }
 
@@ -435,7 +412,7 @@ mod tests {
         let mut x_k_map = HashMap::new();
         x_k_map.insert(1, 0.25);
         x_k_map.insert(2, 0.75);
-        let actual = super::calc_8_sum(&x_k_map);
+        let actual = super::calc_8_sum(&x_k_map).unwrap();
         assert!((expected - actual).abs() < EPSILON);
     }
 
@@ -445,17 +422,7 @@ mod tests {
         let mut x_k_map = HashMap::new();
         x_k_map.insert(1, 0.25);
         x_k_map.insert(2, 0.75);
-        let actual = super::calc_8(1, &x_k_map, 0.617);
-        assert!((expected - actual).abs() < EPSILON);
-    }
-
-    #[test]
-    fn calc_9() {
-        let expected = 0.343598;
-        let mut x_k_map = HashMap::new();
-        x_k_map.insert(1, 0.25);
-        x_k_map.insert(2, 0.75);
-        let actual = super::calc_9(1, &x_k_map, 0.617);
+        let actual = super::calc_8(1, &x_k_map, 0.617).unwrap();
         assert!((expected - actual).abs() < EPSILON);
     }
 
@@ -490,13 +457,6 @@ mod tests {
     fn calc_11() {
         let expected = -0.8237;
         let actual = super::calc_11(0.63, 1.0925, 2.219);
-        assert!((expected - actual).abs() < EPSILON);
-    }
-
-    #[test]
-    fn calc_12() {
-        let expected = -0.58836;
-        let actual = super::calc_12(0.45, 1.0925, 2.219);
         assert!((expected - actual).abs() < EPSILON);
     }
 
