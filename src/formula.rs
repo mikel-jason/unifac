@@ -296,7 +296,7 @@ mod tests {
             gamma: None,
         };
         let test = super::calc_1(&substance);
-        assert_eq!(test, 2.234);
+        assert!((test - 2.234).abs() < EPSILON);
     }
 
     #[test]
@@ -311,7 +311,7 @@ mod tests {
             gamma: None,
         };
         let test = super::calc_2(&substance);
-        assert_eq!(test, 1.388);
+        assert!((test - 1.388).abs() < EPSILON);
     }
 
     #[test]
@@ -328,9 +328,8 @@ mod tests {
         };
         let substances = vec![ethane, benzene];
         let r_i = vec![0.9011 * 2.0, 0.5313 * 6.0];
-        let val = super::calc_3(0, &substances, &r_i);
-        let rounded = (val * 10000.0).round() / 10000.0;
-        assert_eq!(rounded, 0.3612);
+        let test = super::calc_3(0, &substances, &r_i);
+        assert!((test - 0.3612).abs() < EPSILON);
     }
 
     #[test]
@@ -347,15 +346,14 @@ mod tests {
         };
         let substances = vec![ethane, benzene];
         let q_i = vec![0.8480 * 2.0, 0.4 * 6.0];
-        let val = super::calc_4(0, &substances, &q_i);
-        let rounded = (val * 10000.0).round() / 10000.0;
-        assert_eq!(rounded, 0.4141);
+        let test = super::calc_4(0, &substances, &q_i);
+        assert!((test - 0.4141).abs() < EPSILON);
     }
 
     #[test]
     fn calc_5() {
         let test = super::calc_5(2.0, 3.0);
-        assert_eq!(test, -6.0);
+        assert!((test + 6.0).abs() < EPSILON);
     }
 
     #[test]
@@ -489,18 +487,18 @@ mod tests {
         let substances = vec![ethane, benzene];
         let l_i = vec![1.6, 2.2]; // fake values
         let test = super::calc_15_sum(&substances, &l_i);
-        assert_eq!(test, 1.8);
+        assert!((test - 1.8).abs() < EPSILON);
     }
 
-    // #[test]
-    // fn calc_15_fredenslund() {
-    //     let x = 0.047;
-    //     let q = 2.336;
-    //     let phi = 0.0321;
-    //     let theta = 0.0336;
-    //     let l = -0.3860;
-    //     let sum = 0.047 * 0.3860 + 0.953 * 0.2784;
-    //     let res = super::calc_15(x, q, phi, theta, l, sum);
-    //     assert_eq!(res, -0.403);
-    // }
+    #[test]
+    fn calc_15() {
+        let x = 0.047;
+        let q = 2.336;
+        let phi = 0.0321;
+        let theta = 0.0336;
+        let l = -0.3860;
+        let sum = 0.047 * 0.3860 + 0.953 * 0.2784;
+        let test = super::calc_15(x, q, phi, theta, l, sum);
+        assert!((test + 0.42746).abs() < EPSILON);
+    }
 }
