@@ -90,13 +90,13 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
     let mut theta_i_k = Vec::new();
     for i in 0..substances.len() {
         let mut temp = Vec::new();
-        let mut x_k_i_map: HashMap<u8, f64> = HashMap::new();
+        let mut x_i_k_map: HashMap<u8, f64> = HashMap::new();
         for j in 0..substances[i].functional_groups.len() {
-            x_k_i_map.insert(substances[i].functional_groups[j].id, x_i_m[i][j]);
+            x_i_k_map.insert(substances[i].functional_groups[j].id, x_i_m[i][j]);
         }
-        let sum = formula::calc_8_sum(&x_k_i_map)?;
+        let sum = formula::calc_8_sum(&x_i_k_map)?;
         for fg in &substances[i].functional_groups {
-            temp.push(formula::calc_8(fg.id, &x_k_i_map, sum)?);
+            temp.push(formula::calc_8(fg.id, &x_i_k_map, sum)?);
         }
         theta_i_k.push(temp);
     }
