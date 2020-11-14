@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::formula;
 use crate::functional_group::FunctionalGroup;
 use crate::substance::Substance;
@@ -80,23 +78,29 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
         x_m.push(formula::calc_7(*id, &substances, sum));
     }
 
-    let x_k_map: HashMap<u8, f64> = fg_ids.clone().into_iter().zip(x_m).collect();
-    let sum = formula::calc_8_sum(&x_k_map)?;
+    let sum = formula::calc_8_sum(fg_ids.clone(), x_m.clone())?;
     let mut theta_k = Vec::new();
     for id in &fg_ids {
-        theta_k.push(formula::calc_8(*id, &x_k_map, sum)?);
+        theta_k.push(formula::calc_8(*id, fg_ids.clone(), x_m.clone(), sum)?);
     }
 
     let mut theta_i_k = Vec::new();
     for i in 0..substances.len() {
         let mut temp = Vec::new();
-        let mut x_i_k_map: HashMap<u8, f64> = HashMap::new();
+        let mut ids = Vec::new();
+        let mut x_i_m_param = Vec::new();
         for j in 0..substances[i].functional_groups.len() {
-            x_i_k_map.insert(substances[i].functional_groups[j].id, x_i_m[i][j]);
+            ids.push(substances[i].functional_groups[j].id);
+            x_i_m_param.push(x_i_m[i][j]);
         }
-        let sum = formula::calc_8_sum(&x_i_k_map)?;
+        let sum = formula::calc_8_sum(ids.clone(), x_i_m_param.clone())?;
         for fg in &substances[i].functional_groups {
-            temp.push(formula::calc_8(fg.id, &x_i_k_map, sum)?);
+            temp.push(formula::calc_8(
+                fg.id,
+                ids.clone(),
+                x_i_m_param.clone(),
+                sum,
+            )?);
         }
         theta_i_k.push(temp);
     }

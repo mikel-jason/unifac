@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::functional_group::FunctionalGroup;
 use crate::interaction::InteractionParameter;
 use crate::substance::Substance;
@@ -119,12 +117,13 @@ pub fn calc_7(id: u8, substances: &Vec<Substance>, sum: f64) -> f64 {
 /// Calc 8 sum: Functional group's intermediate sum for value THETA
 ///
 /// # Arguments
-/// - `x_k` - Hash map with pairs of functional group id and corresponding X
-pub fn calc_8_sum(x_k: &HashMap<u8, f64>) -> Result<f64, &'static str> {
+/// - `ids` - Vector of all functional group ids
+/// - `x_m` - Vector pf all groups' X_m
+pub fn calc_8_sum(ids: Vec<u8>, x_m: Vec<f64>) -> Result<f64, &'static str> {
     let mut sum = 0.0;
-    for (id, x) in x_k {
-        let fg = FunctionalGroup::from(*id, 0.0)?;
-        sum += fg.q * x;
+    for i in 0..ids.len() {
+        let fg = FunctionalGroup::from(ids[i], 0.0)?;
+        sum += fg.q * x_m[i];
     }
     Ok(sum)
 }
@@ -133,11 +132,16 @@ pub fn calc_8_sum(x_k: &HashMap<u8, f64>) -> Result<f64, &'static str> {
 ///
 /// # Arguments
 /// - `id` - id of target functional group
-/// - `x_k` - Hash map with pairs of functional group id and corresponding X
+/// - `ids` - Vector of all functional group ids
+/// - `x_m` - Vector pf all groups' X_m
 /// - `sum` - intermediate sum calculated using `calc_8_sum()`
-pub fn calc_8(id: u8, x_k: &HashMap<u8, f64>, sum: f64) -> Result<f64, &'static str> {
+pub fn calc_8(id: u8, ids: Vec<u8>, x_m: Vec<f64>, sum: f64) -> Result<f64, &'static str> {
+    let i: usize = ids
+        .iter()
+        .position(|&x| x == id)
+        .ok_or_else(|| "Unknown functional group id")?;
     let fg = FunctionalGroup::from(id, 0.0)?;
-    Ok(fg.q * x_k[&id] / sum)
+    Ok(fg.q * x_m[i] / sum)
 }
 
 /// Calc 10: Functional groups' interaction parameter value psi
@@ -395,20 +399,14 @@ mod tests {
     #[test]
     fn calc_8_sum() {
         let expected = 0.617;
-        let mut x_k_map = HashMap::new();
-        x_k_map.insert(1, 0.25);
-        x_k_map.insert(2, 0.75);
-        let actual = super::calc_8_sum(&x_k_map).unwrap();
+        let actual = super::calc_8_sum(vec![1, 2], vec![0.25, 0.75]).unwrap();
         assert!((expected - actual).abs() < EPSILON);
     }
 
     #[test]
     fn calc_8() {
         let expected = 0.343598;
-        let mut x_k_map = HashMap::new();
-        x_k_map.insert(1, 0.25);
-        x_k_map.insert(2, 0.75);
-        let actual = super::calc_8(1, &x_k_map, 0.617).unwrap();
+        let actual = super::calc_8(1, vec![1, 2], vec![0.25, 0.75], 0.617).unwrap();
         assert!((expected - actual).abs() < EPSILON);
     }
 
