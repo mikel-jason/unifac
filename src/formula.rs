@@ -260,20 +260,8 @@ pub fn calc_15_sum(substances: &Vec<Substance>, l_i: &Vec<f64>) -> f64 {
 /// - `l` - Substances `l`
 /// - `sum_lx` - Sum (denominator), see calc_15_sum
 pub fn calc_15(x: f64, q: f64, phi: f64, theta: f64, l: f64, sum_lx: f64) -> f64 {
-    println!("x: {:?}", x);
-    println!("q: {:?}", q);
-    println!("phi: {:?}", phi);
-    println!("theta: {:?}", theta);
-    println!("l: {:?}", l);
-    println!("sum_lx: {:?}", sum_lx);
-
-    // println!("ln ({:?} / {:?}) + 5 * {:?} * ln({:?} / {:?})", phi, x, q ,theta, phi);
-    // println!("+ {:?} - {:?} / {:?} * {:?}", l, phi, x, sum_lx);
-
     let mut res = (phi / x).ln();
-    // println!("{:?}", res);
     res += 5.0 * q * (theta / phi).ln();
-    // println!("{:?}", res);
     res += l;
     res - phi / x * sum_lx
 }

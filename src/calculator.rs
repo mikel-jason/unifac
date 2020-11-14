@@ -34,17 +34,11 @@ fn calc_combinatorial(substances: Vec<Substance>) -> Result<Vec<f64>, &'static s
         q_i.push(formula::calc_2(&substance));
     }
 
-    println!("r_i: {:?}", r_i);
-    println!("q_i: {:?}", q_i);
-
     for i in 0..substances.len() {
         phi_i.push(formula::calc_3(i, &substances, &r_i));
         theta_i.push(formula::calc_4(i, &substances, &q_i));
         l_i.push(formula::calc_5(r_i[i], q_i[i]));
     }
-    println!("phi_i: {:?}", phi_i);
-    println!("theta_i: {:?}", theta_i);
-    println!("l_i: {:?}", l_i);
 
     let sum_lx = formula::calc_15_sum(&substances, &l_i);
     for i in 0..substances.len() {
@@ -57,8 +51,6 @@ fn calc_combinatorial(substances: Vec<Substance>) -> Result<Vec<f64>, &'static s
             sum_lx,
         ))
     }
-
-    println!("ln_gamma_c_i: {:?}", ln_gamma_c_i);
 
     Ok(ln_gamma_c_i)
 }
@@ -364,8 +356,6 @@ mod tests {
         };
 
         let resid = calc_residual(vec![acetone, pentane], 307.0).unwrap();
-        println!("Acetone: {}", resid[0]);
-        println!("Pentane: {}", resid[1]);
         assert!((resid[0] - acetone_value).abs() < EPSILON);
         assert!((resid[1] - pentane_value).abs() < EPSILON);
     }
