@@ -276,48 +276,43 @@ mod tests {
     use super::*;
     const EPSILON: f64 = 0.001;
 
+    fn create_substance(fraction: f64, fgs: Vec<(u8, f64)>) -> Substance {
+        Substance {
+            fraction,
+            functional_groups: fgs
+                .iter()
+                .map(|x| FunctionalGroup::from(x.0, x.1).unwrap())
+                .collect(),
+            gamma: None,
+        }
+    }
+
+    fn create_ethane(fraction: f64) -> Substance {
+        create_substance(fraction, vec![(1, 2.0)])
+    }
+
+    fn create_benzene(fraction: f64) -> Substance {
+        create_substance(fraction, vec![(9, 6.0)])
+    }
+
     #[test]
     fn calc_1() {
-        let substance = Substance {
-            fraction: 1.0,
-            functional_groups: vec![
-                FunctionalGroup::from(1, 1.0).unwrap(),
-                FunctionalGroup::from(2, 1.0).unwrap(),
-                FunctionalGroup::from(4, 3.0).unwrap(),
-            ],
-            gamma: None,
-        };
+        let substance = create_substance(1.0, vec![(1, 1.0), (2, 1.0), (4, 3.0)]);
         let test = super::calc_1(&substance);
         assert!((test - 2.234).abs() < EPSILON);
     }
 
     #[test]
     fn calc_2() {
-        let substance = Substance {
-            fraction: 1.0,
-            functional_groups: vec![
-                FunctionalGroup::from(1, 1.0).unwrap(),
-                FunctionalGroup::from(2, 1.0).unwrap(),
-                FunctionalGroup::from(4, 3.0).unwrap(),
-            ],
-            gamma: None,
-        };
+        let substance = create_substance(1.0, vec![(1, 1.0), (2, 1.0), (4, 3.0)]);
         let test = super::calc_2(&substance);
         assert!((test - 1.388).abs() < EPSILON);
     }
 
     #[test]
     fn calc_3() {
-        let ethane = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(1, 2.0).unwrap()],
-            gamma: None,
-        };
-        let benzene = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(9, 6.0).unwrap()],
-            gamma: None,
-        };
+        let ethane = create_ethane(0.5);
+        let benzene = create_benzene(0.5);
         let substances = vec![ethane, benzene];
         let r_i = vec![0.9011 * 2.0, 0.5313 * 6.0];
         let test = super::calc_3(0, &substances, &r_i);
@@ -326,16 +321,8 @@ mod tests {
 
     #[test]
     fn calc_4() {
-        let ethane = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(1, 2.0).unwrap()],
-            gamma: None,
-        };
-        let benzene = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(9, 6.0).unwrap()],
-            gamma: None,
-        };
+        let ethane = create_ethane(0.5);
+        let benzene = create_benzene(0.5);
         let substances = vec![ethane, benzene];
         let q_i = vec![0.8480 * 2.0, 0.4 * 6.0];
         let test = super::calc_4(0, &substances, &q_i);
@@ -351,11 +338,7 @@ mod tests {
     #[test]
     fn calc_6() {
         let expected = 1.0;
-        let benzene = Substance {
-            fraction: 1.0,
-            functional_groups: vec![FunctionalGroup::from(9, 6.0).unwrap()],
-            gamma: None,
-        };
+        let benzene = create_benzene(1.0);
         let actual = super::calc_6(9, &benzene);
         assert!((expected - actual).abs() < EPSILON);
     }
@@ -363,16 +346,8 @@ mod tests {
     #[test]
     fn calc_7_sum() {
         let expected = 4.0;
-        let ethane = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(1, 2.0).unwrap()],
-            gamma: None,
-        };
-        let benzene = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(9, 6.0).unwrap()],
-            gamma: None,
-        };
+        let ethane = create_ethane(0.5);
+        let benzene = create_benzene(0.5);
         let substances = vec![ethane, benzene];
         let actual = super::calc_7_sum(&substances);
         assert!((expected - actual).abs() < EPSILON);
@@ -381,16 +356,8 @@ mod tests {
     #[test]
     fn calc_7() {
         let expected = 0.25;
-        let ethane = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(1, 2.0).unwrap()],
-            gamma: None,
-        };
-        let benzene = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(9, 6.0).unwrap()],
-            gamma: None,
-        };
+        let ethane = create_ethane(0.5);
+        let benzene = create_benzene(0.5);
         let substances = vec![ethane, benzene];
         let actual = super::calc_7(1, &substances, 4.0);
         assert!((expected - actual).abs() < EPSILON);
@@ -447,11 +414,7 @@ mod tests {
     #[test]
     fn calc_13() {
         let expected = 0.26;
-        let ethane = Substance {
-            fraction: 0.5,
-            functional_groups: vec![FunctionalGroup::from(1, 2.0).unwrap()],
-            gamma: None,
-        };
+        let ethane = create_ethane(0.5);
         let gamma_k = vec![0.45];
         let gamma_i_k = vec![0.32];
         let actual = super::calc_13(&ethane, &gamma_k, &gamma_i_k);
@@ -460,16 +423,8 @@ mod tests {
 
     #[test]
     fn calc_15_sum() {
-        let ethane = Substance {
-            fraction: 2.0 / 3.0,
-            functional_groups: vec![],
-            gamma: None,
-        };
-        let benzene = Substance {
-            fraction: 1.0 / 3.0,
-            functional_groups: vec![],
-            gamma: None,
-        };
+        let ethane = create_ethane(2.0 / 3.0);
+        let benzene = create_benzene(1.0 / 3.0);
         let substances = vec![ethane, benzene];
         let l_i = vec![1.6, 2.2]; // fake values
         let test = super::calc_15_sum(&substances, &l_i);
