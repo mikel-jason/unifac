@@ -109,11 +109,7 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
     for id_n in &fg_ids {
         let mut temp = Vec::new();
         for id_m in &fg_ids {
-            if id_n == id_m {
-                temp.push(1.0);
-            } else {
-                temp.push(formula::calc_10(*id_n, *id_m, temperature)?);
-            }
+            temp.push(formula::calc_10(*id_n, *id_m, temperature)?);
         }
         psi_n_m.push(temp);
     }
