@@ -146,6 +146,8 @@ pub fn calc_8(id: u8, ids: Vec<u8>, x_m: Vec<f64>, sum: f64) -> Result<f64, &'st
 
 /// Calc 10: Functional groups' interaction parameter value psi
 ///
+/// If i and j are the same, the result is set to 1.
+///
 /// # Arguments
 /// - `i` - id of first functional group
 /// - `j` - id of second functional group
