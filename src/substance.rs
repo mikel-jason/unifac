@@ -7,13 +7,19 @@ pub struct Substance {
     pub gamma: Option<f64>,
 }
 
-impl Substance {}
+impl Substance {
+    pub fn from(fraction: f64, functional_groups: Vec<FunctionalGroup>) -> Substance {
+        Substance {
+            fraction,
+            functional_groups,
+            gamma: None,
+        }
+    }
+}
 
 // Unit tests
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     #[test]
     fn it_works() {
         assert_eq!(2 + 2, 4);
