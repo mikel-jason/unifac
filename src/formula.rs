@@ -1,5 +1,5 @@
 use crate::functional_group::FunctionalGroup;
-use crate::interaction::InteractionParameter;
+use crate::interaction::get_interaction_parameter;
 use crate::substance::Substance;
 
 /// Calc 1: Substance's r
@@ -156,8 +156,8 @@ pub fn calc_10(i: u8, j: u8, temperature: f64) -> Result<f64, &'static str> {
     if i_maingroup == j_maingroup {
         return Ok(1.0);
     }
-    let interp = InteractionParameter::from(i_maingroup, j_maingroup)?;
-    Ok(std::f64::consts::E.powf(-interp.a_ij / temperature))
+    let interp = get_interaction_parameter(i_maingroup, j_maingroup)?;
+    Ok(std::f64::consts::E.powf(-interp / temperature))
 }
 
 /// Calc 11 sum 1: Substance's intermediate first sum needed for value ln GAMMA
