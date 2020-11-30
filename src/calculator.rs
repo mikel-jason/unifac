@@ -81,15 +81,15 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
         .unique()
         .collect();
 
-    let x_i_m: Vec<Vec<f64>> = substances
+    let x_i_m = substances
         .par_iter()
         .map(|s| {
             s.functional_groups
                 .par_iter()
-                .map(|fg| formula::calc_6(fg.id, s).unwrap())
-                .collect()
+                .map(|fg| formula::calc_6(fg.id, &s))
+                .collect::<Result<Vec<f64>, &'static str>>()
         })
-        .collect();
+        .collect::<Result<Vec<Vec<f64>>, &'static str>>()?;
 
     let sum = formula::calc_7_sum(&substances);
     let x_m: Vec<f64> = fg_ids
@@ -100,10 +100,10 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
     let sum = formula::calc_8_sum(fg_ids.clone(), x_m.clone())?;
     let theta_k = fg_ids
         .par_iter()
-        .map(|id| formula::calc_8(*id, fg_ids.clone(), x_m.clone(), sum).unwrap())
-        .collect();
+        .map(|id| formula::calc_8(*id, fg_ids.clone(), x_m.clone(), sum))
+        .collect::<Result<Vec<f64>, &'static str>>()?;
 
-    let theta_i_k: Vec<Vec<f64>> = (0..substances.len())
+    let theta_i_k = (0..substances.len())
         .into_par_iter()
         .map(|i| {
             let (ids, x_i_m_param): (Vec<u8>, Vec<f64>) =
@@ -114,24 +114,24 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
                     .par_iter()
                     .cloned()
                     .unzip();
-            let sum = formula::calc_8_sum(ids.clone(), x_i_m_param.clone()).unwrap();
+            let sum = formula::calc_8_sum(ids.clone(), x_i_m_param.clone())?;
             substances[i]
                 .functional_groups
                 .par_iter()
-                .map(|fg| formula::calc_8(fg.id, ids.clone(), x_i_m_param.clone(), sum).unwrap())
-                .collect()
+                .map(|fg| formula::calc_8(fg.id, ids.clone(), x_i_m_param.clone(), sum))
+                .collect::<Result<Vec<f64>, &'static str>>()
         })
-        .collect();
+        .collect::<Result<Vec<Vec<f64>>, &'static str>>()?;
 
     let psi_n_m: Vec<Vec<f64>> = fg_ids
         .par_iter()
         .map(|id_n| {
             fg_ids
                 .par_iter()
-                .map(|id_m| formula::calc_10(*id_n, *id_m, temperature).unwrap())
-                .collect()
+                .map(|id_m| formula::calc_10(*id_n, *id_m, temperature))
+                .collect::<Result<Vec<f64>, &'static str>>()
         })
-        .collect();
+        .collect::<Result<Vec<Vec<f64>>, &'static str>>()?;
 
     let psi_m_n: Vec<Vec<f64>> = (0..fg_ids.len())
         .into_par_iter()
@@ -154,7 +154,10 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
                 .functional_groups
                 .par_iter()
                 .map(|fg| {
-                    let index_of_fg_in_fg_ids = fg_ids.iter().position(|&x| x == fg.id).unwrap();
+                    let index_of_fg_in_fg_ids = fg_ids
+                        .iter()
+                        .position(|&x| x == fg.id)
+                        .ok_or_else(|| "Unknown functional group")?;
                     let sum_1 = formula::calc_11_sum_1(
                         &theta_i_k[i],
                         &psi_m_n[index_of_fg_in_fg_ids],
@@ -166,11 +169,11 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
                         &psi_n_m,
                         &shadow,
                     );
-                    formula::calc_11(fg.q, sum_1, sum_2)
+                    Ok(formula::calc_11(fg.q, sum_1, sum_2))
                 })
-                .collect()
+                .collect::<Result<Vec<f64>, &'static str>>()
         })
-        .collect();
+        .collect::<Result<Vec<Vec<f64>>, &'static str>>()?;
 
     let shadow_nothing = &vec![false; fg_ids.len()];
     let gamma_k: Vec<f64> = (0..fg_ids.len())
@@ -178,10 +181,10 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
         .map(|i| {
             let sum_1 = formula::calc_11_sum_1(&theta_k, &psi_m_n[i], &shadow_nothing);
             let sum_2 = formula::calc_11_sum_2(i, &theta_k, &psi_n_m, &shadow_nothing);
-            let q_k = FunctionalGroup::from(fg_ids[i], 1.0).unwrap().q;
-            formula::calc_11(q_k, sum_1, sum_2)
+            let q_k = FunctionalGroup::from(fg_ids[i], 1.0)?.q;
+            Ok(formula::calc_11(q_k, sum_1, sum_2))
         })
-        .collect();
+        .collect::<Result<Vec<f64>, &'static str>>()?;
 
     let gamma: Vec<f64> = (0..substances.len())
         .into_par_iter()
@@ -190,13 +193,20 @@ fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64
                 .functional_groups
                 .par_iter()
                 .map(|fg| {
-                    let index = fg_ids.par_iter().position_any(|&x| x == fg.id).unwrap();
-                    gamma_k[index]
+                    let index = fg_ids
+                        .par_iter()
+                        .position_any(|&x| x == fg.id)
+                        .ok_or_else(|| "Unknown functional group")?;
+                    Ok(gamma_k[index])
                 })
-                .collect();
-            formula::calc_13(&substances[i], &gamma_k_subst, &gamma_i_k[i])
+                .collect::<Result<Vec<f64>, &'static str>>()?;
+            Ok(formula::calc_13(
+                &substances[i],
+                &gamma_k_subst,
+                &gamma_i_k[i],
+            ))
         })
-        .collect();
+        .collect::<Result<Vec<f64>, &'static str>>()?;
 
     Ok(gamma)
 }
