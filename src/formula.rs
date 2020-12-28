@@ -277,14 +277,12 @@ mod tests {
     const EPSILON: f64 = 0.001;
 
     fn create_substance(fraction: f64, fgs: Vec<(u8, f64)>) -> Substance {
-        Substance {
+        Substance::from(
             fraction,
-            functional_groups: fgs
-                .iter()
+            fgs.iter()
                 .map(|x| FunctionalGroup::from(x.0, x.1).unwrap())
                 .collect(),
-            gamma: None,
-        }
+        )
     }
 
     fn create_ethane(fraction: f64) -> Substance {

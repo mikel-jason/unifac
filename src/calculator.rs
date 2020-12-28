@@ -11,6 +11,7 @@ pub fn calc(substances: Vec<Substance>, temperature: f64) -> Result<Vec<Substanc
         let gamma = (combinatorial[i] + residual[i]).exp();
 
         calced_substances.push(Substance {
+            name: substances[i].name.clone(),
             fraction: substances[i].fraction.clone(),
             functional_groups: substances[i].functional_groups.clone(),
             gamma: Some(gamma),
@@ -190,28 +191,43 @@ mod tests {
     use super::*;
     const EPSILON: f64 = 0.001;
 
+    fn get_acetone(fraction: f64) -> Substance {
+        Substance::from(
+            fraction,
+            vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
+                FunctionalGroup::from(18, 1.0).unwrap(), // CH3CO
+            ],
+        )
+    }
+
+    fn get_ethanol(fraction: f64) -> Substance {
+        Substance::from(
+            fraction,
+            vec![
+                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
+                FunctionalGroup::from(2, 1.0).unwrap(),  // CH2
+                FunctionalGroup::from(14, 1.0).unwrap(), // OH
+            ],
+        )
+    }
+    fn get_pentane(fraction: f64) -> Substance {
+        Substance::from(
+            fraction,
+            vec![
+                FunctionalGroup::from(1, 2.0).unwrap(),
+                FunctionalGroup::from(2, 3.0).unwrap(),
+            ],
+        )
+    }
+
     #[test]
     fn calc_mixture_acetone_ethanole_50_50() {
         let acetone_value = 1.2140;
         let ethanol_value = 1.2168;
         let temperature = 323.0;
-        let acetone = Substance {
-            fraction: 0.5,
-            functional_groups: vec![
-                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
-                FunctionalGroup::from(18, 1.0).unwrap(), // CH3CO
-            ],
-            gamma: None,
-        };
-        let ethanol = Substance {
-            fraction: 0.5,
-            functional_groups: vec![
-                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
-                FunctionalGroup::from(2, 1.0).unwrap(),  // CH2
-                FunctionalGroup::from(14, 1.0).unwrap(), // OH
-            ],
-            gamma: None,
-        };
+        let acetone = get_acetone(0.5);
+        let ethanol = get_ethanol(0.5);
 
         let resid = calc(vec![acetone, ethanol], temperature).unwrap();
 
@@ -224,23 +240,8 @@ mod tests {
         let acetone_value = 1.0726;
         let ethanol_value = 1.4652;
         let temperature = 323.0;
-        let acetone = Substance {
-            fraction: 0.7,
-            functional_groups: vec![
-                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
-                FunctionalGroup::from(18, 1.0).unwrap(), // CH3CO
-            ],
-            gamma: None,
-        };
-        let ethanol = Substance {
-            fraction: 0.3,
-            functional_groups: vec![
-                FunctionalGroup::from(1, 1.0).unwrap(),  // CH3
-                FunctionalGroup::from(2, 1.0).unwrap(),  // CH2
-                FunctionalGroup::from(14, 1.0).unwrap(), // OH
-            ],
-            gamma: None,
-        };
+        let acetone = get_acetone(0.7);
+        let ethanol = get_ethanol(0.3);
 
         let resid = calc(vec![acetone, ethanol], temperature).unwrap();
 
@@ -253,22 +254,20 @@ mod tests {
         let diethyl_ether_value = 1.0007;
         let benzene_value = 1.1012;
         let temperature = 298.0;
-        let diethyl_ether = Substance {
-            fraction: 0.9,
-            functional_groups: vec![
+        let diethyl_ether = Substance::from(
+            0.9,
+            vec![
                 FunctionalGroup::from(1, 2.0).unwrap(),  // CH3
                 FunctionalGroup::from(2, 1.0).unwrap(),  // CH2
                 FunctionalGroup::from(25, 1.0).unwrap(), // CH2O
             ],
-            gamma: None,
-        };
-        let benzene = Substance {
-            fraction: 0.1,
-            functional_groups: vec![
+        );
+        let benzene = Substance::from(
+            0.1,
+            vec![
                 FunctionalGroup::from(9, 6.0).unwrap(), // CH3
             ],
-            gamma: None,
-        };
+        );
 
         let resid = calc(vec![diethyl_ether, benzene], temperature).unwrap();
 
@@ -282,9 +281,9 @@ mod tests {
         let pentane_value = 0.9999607147028443;
         let temperature = 298.0;
 
-        let acetone = Substance {
-            fraction: 0.047,
-            functional_groups: vec![
+        let acetone = Substance::from(
+            0.047,
+            vec![
                 FunctionalGroup {
                     id: 1,
                     subgroup: "CH3".to_string(),
@@ -302,11 +301,10 @@ mod tests {
                     q: 0.64,
                 },
             ],
-            gamma: None,
-        };
-        let pentane = Substance {
-            fraction: 0.953,
-            functional_groups: vec![
+        );
+        let pentane = Substance::from(
+            0.953,
+            vec![
                 FunctionalGroup {
                     id: 1,
                     subgroup: "CH3".to_string(),
@@ -324,8 +322,7 @@ mod tests {
                     q: 0.5400,
                 }, // CH2
             ],
-            gamma: None,
-        };
+        );
 
         let resid = calc(vec![acetone, pentane], temperature).unwrap();
 
@@ -338,22 +335,8 @@ mod tests {
         let acetone_value = 1.6605607656292078;
         let pentane_value = 0.00534819401527342;
 
-        let acetone = Substance {
-            fraction: 0.047,
-            functional_groups: vec![
-                FunctionalGroup::from(1, 1.0).unwrap(),
-                FunctionalGroup::from(18, 1.0).unwrap(),
-            ],
-            gamma: None,
-        };
-        let pentane = Substance {
-            fraction: 0.953,
-            functional_groups: vec![
-                FunctionalGroup::from(1, 2.0).unwrap(),
-                FunctionalGroup::from(2, 3.0).unwrap(),
-            ],
-            gamma: None,
-        };
+        let acetone = get_acetone(0.047);
+        let pentane = get_pentane(0.953);
 
         let resid = calc_residual(vec![acetone, pentane], 307.0).unwrap();
         assert!((resid[0] - acetone_value).abs() < EPSILON);
