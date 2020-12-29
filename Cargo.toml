@@ -3,6 +3,10 @@ name = "unifac"
 version = "0.1.0"
 authors = ["Mikel Muennekhoff <mmuennekhoff+github@gmail.com>", "Peter Heringer <heringer@protonmail.com"]
 edition = "2018"
+description = "Crate to calculate non-ideal vapor-liquid equilibria using UNIFAC model"
+repository = "https://github.com/sarcaustech/unifac"
+keywords = ["chemistry", "thermodynamics", "vle"]
+categories = ["mathematics", "science", "simulation"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
