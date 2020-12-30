@@ -2,183 +2,211 @@ use crate::formula;
 use crate::functional_group::FunctionalGroup;
 use crate::substance::Substance;
 
+use itertools::Itertools;
+use rayon::prelude::*;
+
 pub fn calc(substances: Vec<Substance>, temperature: f64) -> Result<Vec<Substance>, &'static str> {
     let combinatorial = calc_combinatorial(substances.clone())?;
     let residual = calc_residual(substances.clone(), temperature)?;
 
-    let mut calced_substances: Vec<Substance> = Vec::new();
-    for i in 0..substances.len() {
-        let gamma = (combinatorial[i] + residual[i]).exp();
-
-        calced_substances.push(Substance {
+    let calced_substances: Vec<Substance> = (0..substances.len())
+        .into_par_iter()
+        .map(|i| Substance {
             fraction: substances[i].fraction.clone(),
             functional_groups: substances[i].functional_groups.clone(),
-            gamma: Some(gamma),
+            gamma: Some((combinatorial[i] + residual[i]).exp()),
         })
-    }
+        .collect();
+
     Ok(calced_substances)
 }
 
 fn calc_combinatorial(substances: Vec<Substance>) -> Result<Vec<f64>, &'static str> {
-    let mut r_i: Vec<f64> = Vec::new();
-    let mut q_i: Vec<f64> = Vec::new();
-    let mut phi_i: Vec<f64> = Vec::new();
-    let mut theta_i: Vec<f64> = Vec::new();
-    let mut l_i: Vec<f64> = Vec::new();
-    let mut ln_gamma_c_i: Vec<f64> = Vec::new();
+    let (r_i, q_i): (Vec<f64>, Vec<f64>) = substances
+        .par_iter()
+        .map(|s| (formula::calc_1(s), formula::calc_2(s)))
+        .collect::<Vec<(f64, f64)>>()
+        .par_iter()
+        .cloned()
+        .unzip();
 
-    for substance in &substances {
-        r_i.push(formula::calc_1(&substance));
-        q_i.push(formula::calc_2(&substance));
-    }
-
-    for i in 0..substances.len() {
-        phi_i.push(formula::calc_3(i, &substances, &r_i));
-        theta_i.push(formula::calc_4(i, &substances, &q_i));
-        l_i.push(formula::calc_5(r_i[i], q_i[i]));
-    }
+    // since unzip only supports tuples with 2 elements, the formula results are
+    // nested and unzipped twice
+    let (phi_i, theta_l): (Vec<f64>, Vec<(f64, f64)>) = (0..substances.len())
+        .into_par_iter()
+        .map(|i| {
+            (
+                formula::calc_3(i, &substances, &r_i),
+                (
+                    formula::calc_4(i, &substances, &q_i),
+                    formula::calc_5(r_i[i], q_i[i]),
+                ),
+            )
+        })
+        .collect::<Vec<(f64, (f64, f64))>>()
+        .par_iter()
+        .cloned()
+        .unzip();
+    let (theta_i, l_i): (Vec<f64>, Vec<f64>) = theta_l.par_iter().cloned().unzip();
 
     let sum_lx = formula::calc_15_sum(&substances, &l_i);
-    for i in 0..substances.len() {
-        ln_gamma_c_i.push(formula::calc_15(
-            substances[i].fraction,
-            q_i[i],
-            phi_i[i],
-            theta_i[i],
-            l_i[i],
-            sum_lx,
-        ))
-    }
-
-    Ok(ln_gamma_c_i)
+    Ok((0..substances.len())
+        .into_par_iter()
+        .map(|i| {
+            formula::calc_15(
+                substances[i].fraction,
+                q_i[i],
+                phi_i[i],
+                theta_i[i],
+                l_i[i],
+                sum_lx,
+            )
+        })
+        .collect())
 }
 
 fn calc_residual(substances: Vec<Substance>, temperature: f64) -> Result<Vec<f64>, &'static str> {
-    let mut fg_ids = Vec::new();
-    for substance in &substances {
-        for fg in &substance.functional_groups {
-            if !fg_ids.contains(&fg.id) {
-                fg_ids.push(fg.id);
-            }
-        }
-    }
+    let fg_ids: Vec<u8> = substances
+        .par_iter()
+        .map(|s| {
+            s.functional_groups
+                .par_iter()
+                .map(|fg| fg.id)
+                .collect::<Vec<u8>>()
+        })
+        .into_par_iter()
+        .flatten()
+        .collect::<Vec<u8>>()
+        .into_iter()
+        .unique()
+        .collect();
 
-    let mut x_i_m = Vec::new();
-    for substance in &substances {
-        let mut temp = Vec::new();
-        for fg in &substance.functional_groups {
-            temp.push(formula::calc_6(fg.id, &substance));
-        }
-        x_i_m.push(temp);
-    }
+    let x_i_m = substances
+        .par_iter()
+        .map(|s| {
+            s.functional_groups
+                .par_iter()
+                .map(|fg| formula::calc_6(fg.id, &s))
+                .collect::<Result<Vec<f64>, &'static str>>()
+        })
+        .collect::<Result<Vec<Vec<f64>>, &'static str>>()?;
 
-    let mut x_m = Vec::new();
     let sum = formula::calc_7_sum(&substances);
-    for id in &fg_ids {
-        x_m.push(formula::calc_7(*id, &substances, sum));
-    }
+    let x_m: Vec<f64> = fg_ids
+        .par_iter()
+        .map(|id| formula::calc_7(*id, &substances, sum))
+        .collect();
 
     let sum = formula::calc_8_sum(fg_ids.clone(), x_m.clone())?;
-    let mut theta_k = Vec::new();
-    for id in &fg_ids {
-        theta_k.push(formula::calc_8(*id, fg_ids.clone(), x_m.clone(), sum)?);
-    }
+    let theta_k = fg_ids
+        .par_iter()
+        .map(|id| formula::calc_8(*id, fg_ids.clone(), x_m.clone(), sum))
+        .collect::<Result<Vec<f64>, &'static str>>()?;
 
-    let mut theta_i_k = Vec::new();
-    for i in 0..substances.len() {
-        let mut temp = Vec::new();
-        let mut ids = Vec::new();
-        let mut x_i_m_param = Vec::new();
-        for j in 0..substances[i].functional_groups.len() {
-            ids.push(substances[i].functional_groups[j].id);
-            x_i_m_param.push(x_i_m[i][j]);
-        }
-        let sum = formula::calc_8_sum(ids.clone(), x_i_m_param.clone())?;
-        for fg in &substances[i].functional_groups {
-            temp.push(formula::calc_8(
-                fg.id,
-                ids.clone(),
-                x_i_m_param.clone(),
-                sum,
-            )?);
-        }
-        theta_i_k.push(temp);
-    }
+    let theta_i_k = (0..substances.len())
+        .into_par_iter()
+        .map(|i| {
+            let (ids, x_i_m_param): (Vec<u8>, Vec<f64>) =
+                (0..substances[i].functional_groups.len())
+                    .into_par_iter()
+                    .map(|j| (substances[i].functional_groups[j].id, x_i_m[i][j]))
+                    .collect::<Vec<(u8, f64)>>()
+                    .par_iter()
+                    .cloned()
+                    .unzip();
+            let sum = formula::calc_8_sum(ids.clone(), x_i_m_param.clone())?;
+            substances[i]
+                .functional_groups
+                .par_iter()
+                .map(|fg| formula::calc_8(fg.id, ids.clone(), x_i_m_param.clone(), sum))
+                .collect::<Result<Vec<f64>, &'static str>>()
+        })
+        .collect::<Result<Vec<Vec<f64>>, &'static str>>()?;
 
-    let mut psi_n_m = Vec::new();
-    for id_n in &fg_ids {
-        let mut temp = Vec::new();
-        for id_m in &fg_ids {
-            temp.push(formula::calc_10(*id_n, *id_m, temperature)?);
-        }
-        psi_n_m.push(temp);
-    }
+    let psi_n_m: Vec<Vec<f64>> = fg_ids
+        .par_iter()
+        .map(|id_n| {
+            fg_ids
+                .par_iter()
+                .map(|id_m| formula::calc_10(*id_n, *id_m, temperature))
+                .collect::<Result<Vec<f64>, &'static str>>()
+        })
+        .collect::<Result<Vec<Vec<f64>>, &'static str>>()?;
 
-    let mut psi_m_n = Vec::new();
-    for i in 0..fg_ids.len() {
-        let mut temp = Vec::new();
-        for psi_m in &psi_n_m {
-            temp.push(psi_m[i]);
-        }
-        psi_m_n.push(temp);
-    }
+    let psi_m_n: Vec<Vec<f64>> = (0..fg_ids.len())
+        .into_par_iter()
+        .map(|i| psi_n_m.par_iter().map(|psi_m| psi_m[i]).collect())
+        .collect();
 
-    let mut gamma_i_k = Vec::new();
-    for i in 0..substances.len() {
-        let mut temp = Vec::new();
-        let mut fg_ids_of_current_substance = Vec::new();
-        for fg in &substances[i].functional_groups {
-            fg_ids_of_current_substance.push(fg.id);
-        }
-        let mut shadow = Vec::new();
-        for id in &fg_ids {
-            if fg_ids_of_current_substance.contains(id) {
-                shadow.push(false);
-            } else {
-                shadow.push(true);
-            }
-        }
-        for fg in &substances[i].functional_groups {
-            let index_of_fg_in_fg_ids = fg_ids
-                .iter()
-                .position(|&x| x == fg.id)
-                .ok_or_else(|| "Could not find fg in fgs of mixture.")?;
-            let sum_1 =
-                formula::calc_11_sum_1(&theta_i_k[i], &psi_m_n[index_of_fg_in_fg_ids], &shadow);
-            let sum_2 =
-                formula::calc_11_sum_2(index_of_fg_in_fg_ids, &theta_i_k[i], &psi_n_m, &shadow);
-            temp.push(formula::calc_11(fg.q, sum_1, sum_2));
-        }
-        gamma_i_k.push(temp);
-    }
+    let gamma_i_k: Vec<Vec<f64>> = (0..substances.len())
+        .into_par_iter()
+        .map(|i| {
+            let fg_ids_of_current_substance: Vec<u8> = substances[i]
+                .functional_groups
+                .par_iter()
+                .map(|fg| fg.id)
+                .collect();
+            let shadow: Vec<bool> = fg_ids
+                .par_iter()
+                .map(|id| !fg_ids_of_current_substance.contains(id))
+                .collect();
+            substances[i]
+                .functional_groups
+                .par_iter()
+                .map(|fg| {
+                    let index_of_fg_in_fg_ids = fg_ids
+                        .iter()
+                        .position(|&x| x == fg.id)
+                        .ok_or_else(|| "Unknown functional group")?;
+                    let sum_1 = formula::calc_11_sum_1(
+                        &theta_i_k[i],
+                        &psi_m_n[index_of_fg_in_fg_ids],
+                        &shadow,
+                    );
+                    let sum_2 = formula::calc_11_sum_2(
+                        index_of_fg_in_fg_ids,
+                        &theta_i_k[i],
+                        &psi_n_m,
+                        &shadow,
+                    );
+                    Ok(formula::calc_11(fg.q, sum_1, sum_2))
+                })
+                .collect::<Result<Vec<f64>, &'static str>>()
+        })
+        .collect::<Result<Vec<Vec<f64>>, &'static str>>()?;
 
-    let mut gamma_k = Vec::new();
-    for i in 0..fg_ids.len() {
-        // calc_11_sum1 and 2 accept a vector of booleans to shadow unneeded values
-        // since all values are needed a vector consisting of false is used
-        let shadow_nothing = &vec![false; fg_ids.len()];
-        let sum_1 = formula::calc_11_sum_1(&theta_k, &psi_m_n[i], &shadow_nothing);
-        let sum_2 = formula::calc_11_sum_2(i, &theta_k, &psi_n_m, &shadow_nothing);
-        let q_k = FunctionalGroup::from(fg_ids[i], 1.0)?.q;
-        gamma_k.push(formula::calc_11(q_k, sum_1, sum_2));
-    }
+    let shadow_nothing = &vec![false; fg_ids.len()];
+    let gamma_k: Vec<f64> = (0..fg_ids.len())
+        .into_par_iter()
+        .map(|i| {
+            let sum_1 = formula::calc_11_sum_1(&theta_k, &psi_m_n[i], &shadow_nothing);
+            let sum_2 = formula::calc_11_sum_2(i, &theta_k, &psi_n_m, &shadow_nothing);
+            let q_k = FunctionalGroup::from(fg_ids[i], 1.0)?.q;
+            Ok(formula::calc_11(q_k, sum_1, sum_2))
+        })
+        .collect::<Result<Vec<f64>, &'static str>>()?;
 
-    let mut gamma = Vec::new();
-    for i in 0..substances.len() {
-        let mut gamma_k_subst = Vec::new();
-        for fg in &substances[i].functional_groups {
-            let index = fg_ids
-                .iter()
-                .position(|&x| x == fg.id)
-                .ok_or_else(|| "Could not find fg in fgs of mixture.")?;
-            gamma_k_subst.push(gamma_k[index]);
-        }
-        gamma.push(formula::calc_13(
-            &substances[i],
-            &gamma_k_subst,
-            &gamma_i_k[i],
-        ))
-    }
+    let gamma: Vec<f64> = (0..substances.len())
+        .into_par_iter()
+        .map(|i| {
+            let gamma_k_subst: Vec<f64> = substances[i]
+                .functional_groups
+                .par_iter()
+                .map(|fg| {
+                    let index = fg_ids
+                        .par_iter()
+                        .position_any(|&x| x == fg.id)
+                        .ok_or_else(|| "Unknown functional group")?;
+                    Ok(gamma_k[index])
+                })
+                .collect::<Result<Vec<f64>, &'static str>>()?;
+            Ok(formula::calc_13(
+                &substances[i],
+                &gamma_k_subst,
+                &gamma_i_k[i],
+            ))
+        })
+        .collect::<Result<Vec<f64>, &'static str>>()?;
 
     Ok(gamma)
 }
