@@ -8,6 +8,8 @@ edition = "2018"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
+rayon = "1.5"
+itertools = "0.9.0"
 
 [dev-dependencies]
 rusty-hook = "^0.11.2"

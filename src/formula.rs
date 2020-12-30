@@ -2,16 +2,18 @@ use crate::functional_group::FunctionalGroup;
 use crate::interaction::get_interaction_parameter;
 use crate::substance::Substance;
 
+use rayon::prelude::*;
+
 /// Calc 1: Substance's r
 ///
 /// # Arguments
 /// - `substance` - Target substance
 pub fn calc_1(substance: &Substance) -> f64 {
-    let mut sum = 0.0;
-    for fg in &substance.functional_groups {
-        sum += fg.nu * fg.r;
-    }
-    sum
+    substance
+        .functional_groups
+        .par_iter()
+        .map(|fg| fg.nu * fg.r)
+        .sum()
 }
 
 /// Calc 2: Substance's q
@@ -19,11 +21,11 @@ pub fn calc_1(substance: &Substance) -> f64 {
 /// # Arguments
 /// - `substance` - Target substance
 pub fn calc_2(substance: &Substance) -> f64 {
-    let mut sum = 0.0;
-    for fg in &substance.functional_groups {
-        sum += fg.nu * fg.q;
-    }
-    sum
+    substance
+        .functional_groups
+        .par_iter()
+        .map(|fg| fg.nu * fg.q)
+        .sum()
 }
 
 /// Calc 3: Substance's intermediate value phi
@@ -33,10 +35,10 @@ pub fn calc_2(substance: &Substance) -> f64 {
 /// - `substances` - All substances
 /// - `r_i` - Vec containing the substances' r_i (ordered as `substances`)
 pub fn calc_3(id: usize, substances: &Vec<Substance>, r_i: &Vec<f64>) -> f64 {
-    let mut sum = 0.0;
-    for i in 0..substances.len() {
-        sum += substances[i].fraction * r_i[i];
-    }
+    let sum: f64 = (0..substances.len())
+        .into_par_iter()
+        .map(|i| substances[i].fraction * r_i[i])
+        .sum();
     r_i[id] * substances[id].fraction / sum
 }
 
@@ -47,10 +49,10 @@ pub fn calc_3(id: usize, substances: &Vec<Substance>, r_i: &Vec<f64>) -> f64 {
 /// - `substances` - All substances
 /// - `q_i` - Vec containing the substances' q_i (ordered as `substances`)
 pub fn calc_4(id: usize, substances: &Vec<Substance>, q_i: &Vec<f64>) -> f64 {
-    let mut sum = 0.0;
-    for i in 0..substances.len() {
-        sum += substances[i].fraction * q_i[i];
-    }
+    let sum: f64 = (0..substances.len())
+        .into_par_iter()
+        .map(|i| substances[i].fraction * q_i[i])
+        .sum();
     q_i[id] * substances[id].fraction / sum
 }
 
@@ -70,16 +72,14 @@ pub fn calc_5(r: f64, q: f64) -> f64 {
 /// # Arguments
 /// - `id` - id of target functional group
 /// - `substance` - target substance
-pub fn calc_6(id: u8, substance: &Substance) -> f64 {
-    let mut sum = 0.0;
-    let mut nu_m = 0.0;
-    for fg in &substance.functional_groups {
-        sum += fg.nu;
-        if fg.id == id {
-            nu_m = fg.nu;
-        }
-    }
-    nu_m / sum
+pub fn calc_6(id: u8, substance: &Substance) -> Result<f64, &'static str> {
+    let sum: f64 = substance.functional_groups.par_iter().map(|fg| fg.nu).sum();
+    let i = substance
+        .functional_groups
+        .par_iter()
+        .position_any(|fg| fg.id == id)
+        .ok_or_else(|| "Unknown functional group id")?;
+    Ok(substance.functional_groups[i].nu / sum)
 }
 
 /// Calc 7 sum: Functional group's intermediate sum needed for value X
@@ -87,13 +87,15 @@ pub fn calc_6(id: u8, substance: &Substance) -> f64 {
 /// # Arguments
 /// - `substances` - vector of all substances in mixture
 pub fn calc_7_sum(substances: &Vec<Substance>) -> f64 {
-    let mut sum = 0.0;
-    for substance in substances {
-        for fg in &substance.functional_groups {
-            sum += substance.fraction * fg.nu;
-        }
-    }
-    sum
+    substances
+        .par_iter()
+        .map(|s| {
+            s.functional_groups
+                .par_iter()
+                .map(|fg| s.fraction * fg.nu)
+                .sum::<f64>()
+        })
+        .sum()
 }
 
 /// Calc 7: Functional group's intermediate value X
@@ -103,14 +105,16 @@ pub fn calc_7_sum(substances: &Vec<Substance>) -> f64 {
 /// - `sum` - intermediate sum calculated using `calc_7_sum()`
 /// - `substances` - vector of all substances in mixture
 pub fn calc_7(id: u8, substances: &Vec<Substance>, sum: f64) -> f64 {
-    let mut single_sum = 0.0;
-    for substance in substances {
-        for fg in &substance.functional_groups {
-            if fg.id == id {
-                single_sum += substance.fraction * fg.nu;
-            }
-        }
-    }
+    let single_sum: f64 = substances
+        .par_iter()
+        .map(|s| {
+            s.functional_groups
+                .par_iter()
+                .filter(|fg| fg.id == id)
+                .map(|fg| s.fraction * fg.nu)
+                .sum::<f64>()
+        })
+        .sum();
     single_sum / sum
 }
 
@@ -120,12 +124,10 @@ pub fn calc_7(id: u8, substances: &Vec<Substance>, sum: f64) -> f64 {
 /// - `ids` - Vector of all functional group ids
 /// - `x_m` - Vector pf all groups' X_m
 pub fn calc_8_sum(ids: Vec<u8>, x_m: Vec<f64>) -> Result<f64, &'static str> {
-    let mut sum = 0.0;
-    for i in 0..ids.len() {
-        let fg = FunctionalGroup::from(ids[i], 0.0)?;
-        sum += fg.q * x_m[i];
-    }
-    Ok(sum)
+    Ok((0..ids.len())
+        .into_par_iter()
+        .map(|i| FunctionalGroup::from(ids[i], 0.0).map_or_else(|_| 0.0, |fg| fg.q) * x_m[i])
+        .sum())
 }
 
 /// Calc 8: Functional group's intermediate value THETA
@@ -137,14 +139,16 @@ pub fn calc_8_sum(ids: Vec<u8>, x_m: Vec<f64>) -> Result<f64, &'static str> {
 /// - `sum` - intermediate sum calculated using `calc_8_sum()`
 pub fn calc_8(id: u8, ids: Vec<u8>, x_m: Vec<f64>, sum: f64) -> Result<f64, &'static str> {
     let i: usize = ids
-        .iter()
-        .position(|&x| x == id)
+        .par_iter()
+        .position_any(|&x| x == id)
         .ok_or_else(|| "Unknown functional group id")?;
     let fg = FunctionalGroup::from(id, 0.0)?;
     Ok(fg.q * x_m[i] / sum)
 }
 
 /// Calc 10: Functional groups' interaction parameter value psi
+///
+/// If i and j are the same, the result is set to 1.
 ///
 /// # Arguments
 /// - `i` - id of first functional group
@@ -230,11 +234,10 @@ pub fn calc_11(q_k: f64, sum_1: f64, sum_2: f64) -> f64 {
 /// - `gamma_k` - vector of GAMMA of functional groups contained in substance
 /// - `gamma_i_k` - vector of GAMMA of substance and functional groups
 pub fn calc_13(substance: &Substance, gamma_k: &Vec<f64>, gamma_i_k: &Vec<f64>) -> f64 {
-    let mut sum = 0.0;
-    for i in 0..substance.functional_groups.len() {
-        sum += substance.functional_groups[i].nu * (gamma_k[i] - gamma_i_k[i]);
-    }
-    sum
+    (0..substance.functional_groups.len())
+        .into_par_iter()
+        .map(|i| substance.functional_groups[i].nu * (gamma_k[i] - gamma_i_k[i]))
+        .sum()
 }
 
 /// Calc 15: Sustance's combinatorial activity coeff. part
@@ -245,11 +248,10 @@ pub fn calc_13(substance: &Substance, gamma_k: &Vec<f64>, gamma_i_k: &Vec<f64>) 
 /// - `substances` - All substances
 /// - `l_i` - Substances' l_i (ordered as `substances`)
 pub fn calc_15_sum(substances: &Vec<Substance>, l_i: &Vec<f64>) -> f64 {
-    let mut sum = 0.0;
-    for i in 0..substances.len() {
-        sum += substances[i].fraction * l_i[i];
-    }
-    sum
+    (0..substances.len())
+        .into_par_iter()
+        .map(|i| substances[i].fraction * l_i[i])
+        .sum()
 }
 
 /// Calc 15: Sustance's combinatorial activity coeff. part
@@ -337,7 +339,7 @@ mod tests {
     fn calc_6() {
         let expected = 1.0;
         let benzene = create_benzene(1.0);
-        let actual = super::calc_6(9, &benzene);
+        let actual = super::calc_6(9, &benzene).unwrap();
         assert!((expected - actual).abs() < EPSILON);
     }
 
