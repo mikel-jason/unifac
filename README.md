@@ -2,7 +2,7 @@
 
 [version]: https://img.shields.io/crates/v/unifac.svg
 [license]: https://img.shields.io/crates/l/unifac.svg
-[action]: https://img.shields.io/github/workflow/status/sarcaustech/unifac/ci/main
+[action]: https://img.shields.io/github/workflow/status/sarcaustech/unifac/CI/main
 
 **Implementation of the UNIFAC model to calculate activity coefficients in VLE using Rust**
 

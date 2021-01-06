@@ -1,7 +1,7 @@
 [package]
 name = "unifac"
-version = "0.1.0"
-authors = ["Mikel Muennekhoff <mmuennekhoff+github@gmail.com>", "Peter Heringer <heringer@protonmail.com"]
+version = "0.1.1"
+authors = ["Mikel Muennekhoff <mmuennekhoff+github@gmail.com>", "Peter Heringer <heringer@protonmail.com>"]
 edition = "2018"
 license-file = "LICENSE"
 description = "Crate to calculate non-ideal vapor-liquid equilibria using UNIFAC model"
