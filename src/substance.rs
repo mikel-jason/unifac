@@ -1,6 +1,7 @@
 use crate::functional_group::FunctionalGroup;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Substance {
     pub name: String,
     pub fraction: f64,
