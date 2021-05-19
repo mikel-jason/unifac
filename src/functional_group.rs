@@ -1,16 +1,39 @@
 use serde::{Deserialize, Serialize};
 
+/// Functional group as building block of a substance
+///
+/// Functional groups build substances and hold empirical data. Substance-related
+/// data is derived from aggregating functional groups as described be UNIFAC model.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FunctionalGroup {
+    /// - ID of the functional group (see FuncitonalGroup::from)
     pub id: u8,
+    /// - The string representation of the group
     pub subgroup: String,
+    /// -  The ID of the main group (e.g. CH3, CH2, CH have the same group)
     pub main_id: u8,
+    /// - Number of these functional groups in the containing substance
     pub nu: f64,
+    /// - Model parameter
     pub r: f64,
+    /// - Model parameter
     pub q: f64,
 }
 
 impl FunctionalGroup {
+    /// Create a functional group
+    ///
+    /// This is the intended method to setup a substance by adding funcional groups.
+    ///
+    /// # Arguments
+    /// - `id` - ID identifying the functional group. The IDs can be obtained from [DDBST](http://www.ddbst.com/published-parameters-unifac.html).
+    /// - `amount` - Number of this functional group in the containing substance
+    ///
+    /// # Example
+    /// ```
+    /// use unifac::*;
+    /// let ch3 = FunctionalGroup::from(1, 2.0).unwrap();
+    /// ```
     pub fn from(id: u8, amount: f64) -> Result<FunctionalGroup, &'static str> {
         match id {
             1 => Ok(FunctionalGroup {

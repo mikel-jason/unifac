@@ -5,6 +5,28 @@ use crate::substance::Substance;
 use itertools::Itertools;
 use rayon::prelude::*;
 
+/// Calculates activity coeficients for the given mixture
+///
+/// # Arugments
+///
+/// # Example
+/// ```
+/// use unifac::*;
+/// let diethyl_ether = Substance::from(
+///     0.9,
+///     vec![
+///         FunctionalGroup::from(1, 2.0).unwrap(),  // CH3
+///         FunctionalGroup::from(2, 1.0).unwrap(),  // CH2
+///         FunctionalGroup::from(25, 1.0).unwrap(), // CH2O
+///     ],
+/// );
+/// let benzene = Substance::from(
+///     0.1,
+///     vec![
+///         FunctionalGroup::from(9, 6.0).unwrap(), // CH3
+///     ],
+/// );
+/// ```
 pub fn calc(substances: Vec<Substance>, temperature: f64) -> Result<Vec<Substance>, &'static str> {
     let combinatorial = calc_combinatorial(substances.clone())?;
     let residual = calc_residual(substances.clone(), temperature)?;
