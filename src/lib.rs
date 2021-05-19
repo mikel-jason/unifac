@@ -8,6 +8,7 @@
 //! Therefore, it can be used to predict VLE without any further substance / mixture specific data.
 //!
 //! The following table explains used terms in this crate
+//!
 //! | Term | Explanation |
 //! |------|-------------|
 //! | Substance | A chemical substance, based on covalent bonds  (e.g. ethane C2H6) |

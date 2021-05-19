@@ -1,6 +1,6 @@
 [package]
 name = "unifac"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Mikel Muennekhoff <mmuennekhoff+github@gmail.com>", "Peter Heringer <heringer@protonmail.com>"]
 edition = "2018"
 license-file = "LICENSE"
