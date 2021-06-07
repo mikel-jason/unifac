@@ -7,7 +7,12 @@ use rayon::prelude::*;
 
 /// Calculates activity coeficients for the given mixture
 ///
-/// # Arugments
+/// Returns `Vec<Substance>` with each substance having the activity
+/// coefficient set as gamma.
+///
+/// # Arguments
+/// - `substances` - All substances in the mixture
+/// - `temperature` - Mixture's temperature (in Kelvin)
 ///
 /// # Example
 /// ```

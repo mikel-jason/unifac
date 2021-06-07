@@ -6,11 +6,11 @@ use serde::{Deserialize, Serialize};
 pub struct Substance {
     /// Verbose name of the substance
     pub name: String,
-    /// - Fraction (molar) of the substance in the containing mixture
+    /// Fraction (molar) of the substance in the containing mixture
     pub fraction: f64,
-    /// - Functional groups defining the substance
+    /// Functional groups defining the substance
     pub functional_groups: Vec<FunctionalGroup>,
-    /// - Calculated activity coefficient
+    /// Calculated activity coefficient
     pub gamma: Option<f64>,
 }
 
@@ -46,7 +46,7 @@ impl Substance {
     /// Create a new substance
     ///
     /// # Arguments
-    /// - `name ` - Verbose name
+    /// - `name` - Verbose name
     /// - `fraction` - Fraction (molar) of the substance in the containing mixture
     /// - `functional_groups` - Functional groups defining the substance
     ///

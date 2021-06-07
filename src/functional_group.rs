@@ -6,17 +6,17 @@ use serde::{Deserialize, Serialize};
 /// data is derived from aggregating functional groups as described be UNIFAC model.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FunctionalGroup {
-    /// - ID of the functional group (see FuncitonalGroup::from)
+    /// ID of the functional group (see FuncitonalGroup::from)
     pub id: u8,
-    /// - The string representation of the group
+    /// The string representation of the group
     pub subgroup: String,
-    /// -  The ID of the main group (e.g. CH3, CH2, CH have the same group)
+    /// The ID of the main group (e.g. CH3, CH2, CH have the same group)
     pub main_id: u8,
-    /// - Number of these functional groups in the containing substance
+    /// Number of these functional groups in the containing substance
     pub nu: f64,
-    /// - Model parameter
+    /// Model parameter
     pub r: f64,
-    /// - Model parameter
+    /// Model parameter
     pub q: f64,
 }
 
